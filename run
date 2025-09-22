@@ -1,0 +1,16 @@
+if [ $# -lt 1 ]; then
+  echo "Usage: ./run <file or dir>"
+exit 1
+fi
+
+set -e
+
+DIR_NAME="$1"
+echo $DIR_NAME
+echo "assemblying..."
+uasm -elf64 -Fo $DIR_NAME.o $DIR_NAME.asm
+echo -e "\n\ncompiling..."
+gcc $DIR_NAME.o -no-pie -o $DIR_NAME
+echo -e "\n\nProgram:"
+./$DIR_NAME
+echo -e "\nran successfully"
