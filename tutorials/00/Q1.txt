@@ -1,0 +1,10 @@
+mov eax, 5
+push eax
+mov eax, 7
+push eax
+
+mov ebx, [ebp-8]
+mov eax, [ebp-4]
+add eax, ebx
+
+push eax

@@ -19,7 +19,17 @@
     devShells.${system}.default = pkgs.mkShell {
       packages = [
         pkgs.uasm
+        pkgs.nasm
+        pkgs.pkg-config
+        pkgs.openssl
+        pkgs.cacert
+        pkgs.rustc
+        pkgs.cargo
+        pkgs.gcc_multi
+        pkgs.gnumake
       ];
+
+      PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
       env.LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [ ];
     };
   };

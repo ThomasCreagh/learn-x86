@@ -1,0 +1,3 @@
+mov ebx, 3
+mov eax, 2
+mul ebx    ; eax *= ebx

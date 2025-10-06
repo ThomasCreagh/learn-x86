@@ -1,0 +1,8 @@
+set -e
+echo "assemblying..."
+nasm -f elf32 funcs.asm -o funcs.o
+echo -e "\n\ncompiling..."
+gcc -m32 -o test test.c funcs.o
+echo -e "\n\nProgram:"
+./test
+echo -e "\nran successfully"
