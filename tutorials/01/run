@@ -1,0 +1,3 @@
+nasm -f elf32 funcs.asm -o funcs.o
+gcc -m32 -o test test.c funcs.o
+./test
