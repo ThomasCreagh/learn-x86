@@ -11,7 +11,7 @@ section .text
 ; -----------------------------------------------------------------------------
 ; get_txt
 ; -----------------------------------------------------------------------------
-; Addes the ".txt\0" to a given 
+; Addes the "/wall.txt\0" or "/friends.txt\0" to a given 
 ;
 ; Input:
 ;   [esp+8]   - filename
@@ -27,7 +27,7 @@ get_txt:
 	push	ebp
 	mov	ebp, esp
 
-	push	dword [ebp+8]		; strcpy[1] = filename
+	push	dword [ebp+8]	; strcpy[1] = filename
 	push	dword [ebp+16]	; strcpy[0] = buffer
 	call	strcpy		; strcpy()
 	add	esp, 8

@@ -1,12 +1,12 @@
-nasm -f elf32 create_user.asm -o create_user.o
-nasm -f elf32 exit.asm        -o exit.o
-nasm -f elf32 get_txt.asm     -o get_txt.o
-nasm -f elf32 mkdir.asm       -o mkdir.o
-nasm -f elf32 strcat.asm      -o strcat.o
-nasm -f elf32 strcpy.asm      -o strcpy.o
-nasm -f elf32 strlen.asm      -o strlen.o
-nasm -f elf32 touch.asm       -o touch.o
-nasm -f elf32 user_exists.asm -o user_exists.o
+nasm -f elf32 core/create_user.asm -o create_user.o
+nasm -f elf32 stdlib/exit.asm        -o exit.o
+nasm -f elf32 utils/get_txt.asm     -o get_txt.o
+nasm -f elf32 utils/mkdir.asm       -o mkdir.o
+nasm -f elf32 stdlib/strcat.asm      -o strcat.o
+nasm -f elf32 stdlib/strcpy.asm      -o strcpy.o
+nasm -f elf32 stdlib/strlen.asm      -o strlen.o
+nasm -f elf32 utils/touch.asm       -o touch.o
+nasm -f elf32 utils/user_exists.asm -o user_exists.o
 
 gcc -m32 -nostartfiles -o create_user create_user.o exit.o get_txt.o mkdir.o strcat.o strcpy.o strlen.o touch.o user_exists.o
 
