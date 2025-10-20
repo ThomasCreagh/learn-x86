@@ -1,15 +1,13 @@
-extern exit
 extern user_exists
 extern get_txt
 extern mkdir
 extern touch
 
-global	_start
+global	create_user
 
 section .data
-	nok_0	db	"nok: no identifier provided", 0
-	nok_1	db	"nok: user already exists", 0
-	ok_0	db	"ok: user created!", 0
+	nok	db	"nok: user already exists", 0
+	ok	db	"ok: user created!", 0
 
 
 section .bss
@@ -22,23 +20,17 @@ section .text
 ; Create files for user init.
 ;
 ; Input:
-;   [esp] - number of args
-;   [esp+4] - program name
 ;   [esp+8] - user id
-; Output: eax - length of the string
+; Output:
+;   eax - sucessful or not
+;   edx - output message
 ;
 ; Registers used:
 ;   eax - return value / temporary
 ; -----------------------------------------------------------------------------
-_start:
-	; check args given
-	mov	eax, [esp]	; eax = number of args
-	cmp	eax, 2
-	je	.arg_given	; if (eax != 2) {
-	push	nok_0		;   exit[1] = nok_0
-	push	1		;   exit[0] = 1
-	call	exit		; }
-.arg_given:
+create_user:
+	push	ebp
+	mov	ebp, esp
 	; save userid
 	mov	esi, [esp+8]
 
@@ -49,10 +41,13 @@ _start:
 	
 	test	eax, eax
 	jnz	.not_exists	; if (file exists) {
-	push	nok_1		;   exit[1] = nok_1
-	push	1		;   exit[0] = 1
-	call	exit		; }
+	mov	edx, 1		;   exit[1] = 1
+	mov	eax, nok	;   exit[0] = nok
+	pop	ebp
+	ret			; return
 .not_exists:
+	; check if data file exists
+
 	; make dir
 	push	esi		; mkdir[0] = arg[1]
 	call	mkdir
@@ -70,10 +65,10 @@ _start:
 	add	esp, 4		; clean stack
 
 	; clear buffer
-	mov	edi, buffer
-	mov	ecx, 32        ; 128 bytes / 4 bytes per store = 32
-	xor	eax, eax       ; clear 32-bit register
-	rep	stosd          ; store EAX into [EDI], 4 bytes at a time
+	;mov	edi, buffer
+	;mov	ecx, 32        ; 128 bytes / 4 bytes per store = 32
+	;xor	eax, eax       ; clear 32-bit register
+	;rep	stosd          ; store EAX into [EDI], 4 bytes at a time
 
 	; make friends.txt
 	push	buffer		; get_txt[2] = buffer
@@ -86,7 +81,8 @@ _start:
 	call	touch
 	add	esp, 4		; clean stack
 
-	; exit succefully
-	push	ok_0		;   exit[1] = ok_0
-	push	0		;   exit[0] = 0
-	call	exit		; }
+	; return successfully
+	mov	edx, 0		;   exit[1] = 0
+	mov	eax, ok	;   exit[0] = ok
+	pop	ebp
+	ret			; return

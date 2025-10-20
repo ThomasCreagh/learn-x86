@@ -24,7 +24,7 @@ strcpy:
 
 	mov	edi, [ebp+8]	; dest = arg[0]
 	mov	esi, [ebp+12]	; source = arg[1]
-.loop
+.loop:
 	lodsb			; tmp = source[index++]
 	stosb			; dest[index++] = tmp
 	test	al, al		; tmp != 0?

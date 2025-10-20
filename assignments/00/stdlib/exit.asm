@@ -26,8 +26,7 @@ exit:
 	mov	edx, eax	; lenght of arg[1]
 
 	mov	eax, 4		; sys_write
-	mov	ebx, [ebp+8]	; ebx = arg[0]
-	inc	ebx		; ebx print stdout or stderr depending on exit code
+	mov	ebx, 1		; stdout
 	mov	ecx, [ebp+12]	; address of string
 	int	0x80		; kernal interupt
 

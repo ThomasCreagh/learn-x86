@@ -1,3 +1,5 @@
+set -e
+nasm -f elf32 mains/create_user_main.asm -o create_user_main.o
 nasm -f elf32 core/create_user.asm -o create_user.o
 nasm -f elf32 stdlib/exit.asm        -o exit.o
 nasm -f elf32 utils/get_txt.asm     -o get_txt.o
@@ -8,7 +10,7 @@ nasm -f elf32 stdlib/strlen.asm      -o strlen.o
 nasm -f elf32 utils/touch.asm       -o touch.o
 nasm -f elf32 utils/user_exists.asm -o user_exists.o
 
-gcc -m32 -nostartfiles -o create_user create_user.o exit.o get_txt.o mkdir.o strcat.o strcpy.o strlen.o touch.o user_exists.o
+gcc -m32 -nostartfiles -o bin/create_user create_user_main.o create_user.o exit.o get_txt.o mkdir.o strcat.o strcpy.o strlen.o touch.o user_exists.o
 
 rm -rf *.o
 

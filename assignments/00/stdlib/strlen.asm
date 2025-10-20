@@ -20,13 +20,13 @@ strlen:
 	push	esi
 	mov	esi, [ebp+8]	; str = arg[0]
 	xor	ecx, ecx	; ecx = 0
-.loop
+.loop:
 	mov	al, [esi+ecx]	; str[ecx]
 	cmp	al, 0		; str[ecx] == 0
 	je	.exit		; yes -> exit
 	inc	ecx		; no -> increment ecx
 	jmp	.loop
-.exit
+.exit:
 	mov	eax, ecx	; return ecx
 	pop	esi
 	pop	ebp

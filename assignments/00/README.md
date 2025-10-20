@@ -1,6 +1,7 @@
 http://www.posix.nl/linuxassembly/nasmdochtml/nasmdoca.html
 
 qs:
-- stderr, stdout for returns
-- what does he mean about /dev/null ?
+- stderr, stdout for returns | only stdout
+- what does he mean about /dev/null ? | not even anthony know
 - should create user have _start? as well as the reste of the main files
+- should the server program quit on user exists and should it print out the nok if run by the server?
