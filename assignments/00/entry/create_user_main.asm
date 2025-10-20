@@ -1,4 +1,5 @@
 extern exit
+extern print
 extern create_user
 
 
@@ -28,7 +29,9 @@ _start:
 	mov	eax, [esp]	; eax = number of args
 	cmp	eax, 2
 	je	.arg_given	; if (eax != 2) {
-	push	nok		;   exit[1] = nok_0
+	push	nok		;   print[0] = nok
+	call	print		;   print err
+	add	esp, 4		;   clean stack
 	push	1		;   exit[0] = 1
 	call	exit		; }
 .arg_given:
@@ -37,6 +40,5 @@ _start:
 	add	esp, 4
 
 	; exit succefully
-	push	eax		;   exit[1] = ok_0
-	push	edx		;   exit[0] = 0
+	push	eax		;   exit[0] = create_user status
 	call	exit		; }

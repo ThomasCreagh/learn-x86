@@ -22,7 +22,7 @@ mkdir:
 
 	mov	eax, 39		; sys_mkdir
 	mov	ebx, [ebp+8]	; dir name
-	mov	ecx, 0777o	; rwxrwxrwx
+	mov	ecx, 0755o	; rwxrwxrwx
 	int	0x80
 
 	pop ebx

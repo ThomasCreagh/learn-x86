@@ -2,6 +2,7 @@ extern user_exists
 extern get_txt
 extern mkdir
 extern touch
+extern print
 
 global	create_user
 
@@ -23,7 +24,6 @@ section .text
 ;   [esp+8] - user id
 ; Output:
 ;   eax - sucessful or not
-;   edx - output message
 ;
 ; Registers used:
 ;   eax - return value / temporary
@@ -41,13 +41,13 @@ create_user:
 	
 	test	eax, eax
 	jnz	.not_exists	; if (file exists) {
-	mov	edx, 1		;   exit[1] = 1
-	mov	eax, nok	;   exit[0] = nok
-	pop	ebp
-	ret			; return
+	push	nok		;   exit[0] = nok
+	call	print		;   print error
+	add	esp, 4		;   clean stack
+	mov	eax, 1		;   return val = 1
+	pop	ebp		;   return 
+	ret			; }
 .not_exists:
-	; check if data file exists
-
 	; make dir
 	push	esi		; mkdir[0] = arg[1]
 	call	mkdir
@@ -82,7 +82,10 @@ create_user:
 	add	esp, 4		; clean stack
 
 	; return successfully
-	mov	edx, 0		;   exit[1] = 0
-	mov	eax, ok	;   exit[0] = ok
+	push	ok		; print[0] = ok
+	call	print
+	add	esp, 4		; clean stack
+	xor	eax, eax	; return val = 0
+
 	pop	ebp
 	ret			; return
