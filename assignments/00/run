@@ -1,5 +1,5 @@
 set -e
-nasm -f elf32 mains/create_user_main.asm -o create_user_main.o
+nasm -f elf32 entry/create_user_main.asm -o create_user_main.o
 nasm -f elf32 core/create_user.asm -o create_user.o
 nasm -f elf32 stdlib/exit.asm        -o exit.o
 nasm -f elf32 utils/get_txt.asm     -o get_txt.o
