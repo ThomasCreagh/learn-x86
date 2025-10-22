@@ -7,7 +7,7 @@ extern print
 global	add_friend
 
 section .data
-	nok_id		db	"nok: user ’$id’ does not exist", 0
+	nok_user	db	"nok: user ’$id’ does not exist", 0
 	nok_frnd	db	"nok: user ’$friend’ does not exist", 0
 	ok		db	"ok", 0
 
@@ -30,13 +30,14 @@ section .text
 ; Registers used:
 ;   eax - return value / temporary
 ; -----------------------------------------------------------------------------
-create_user:
+add_friend:
 	push	ebp
 	mov	ebp, esp
 	push	esi
 	push	edi
-	; save userid
+	; save user id
 	mov	esi, [esp+8]
+	; save friend id
 	mov	edi, [esp+12]
 
 	; check user existance
@@ -46,7 +47,7 @@ create_user:
 	
 	test	eax, eax
 	jnz	.user_not_exists; if (file exists) {
-	push	nok_id		;   exit[0] = nok
+	push	nok_user	;   print[0] = nok_user
 	call	print		;   print error
 	add	esp, 4		;   clean stack
 	mov	eax, 1		;   return val = 1
@@ -59,7 +60,7 @@ create_user:
 	
 	test	eax, eax
 	jnz	.frnd_not_exists; if (file exists) {
-	push	nok_frnd	;   exit[0] = nok
+	push	nok_frnd	;   print[0] = nok_frnd
 	call	print		;   print error
 	add	esp, 4		;   clean stack
 	mov	eax, 1		;   return val = 1

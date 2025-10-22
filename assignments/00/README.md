@@ -1,5 +1,11 @@
 http://www.posix.nl/linuxassembly/nasmdochtml/nasmdoca.html
 
+TODOS:
+- [ ] Read contents of a file
+- [ ] Parse file contenets to see if a user is in the file
+- [ ] Make a "user_in_file" subroutine
+- [ ] Append to a file
+
 qs:
 - stderr, stdout for returns | only stdout
 - what does he mean about /dev/null ? | not even anthony know
