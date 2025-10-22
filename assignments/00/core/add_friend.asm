@@ -4,11 +4,12 @@ extern mkdir
 extern touch
 extern print
 
-global	create_user
+global	add_friend
 
 section .data
-	nok	db	"nok: user already exists", 0
-	ok	db	"ok: user created!", 0
+	nok_id		db	"nok: user ’$id’ does not exist", 0
+	nok_frnd	db	"nok: user ’$friend’ does not exist", 0
+	ok		db	"ok", 0
 
 
 section .bss
@@ -16,12 +17,13 @@ section .bss
 
 section .text
 ; -----------------------------------------------------------------------------
-; create_user
+; add_friend
 ; -----------------------------------------------------------------------------
-; Create files for user init.
+; Adds a friend of the friend list of an id
 ;
 ; Input:
-;   [esp+8] - user id
+;   [esp+8]  - user id
+;   [esp+12] - friend id
 ; Output:
 ;   eax - sucessful or not
 ;
@@ -32,22 +34,44 @@ create_user:
 	push	ebp
 	mov	ebp, esp
 	push	esi
+	push	edi
 	; save userid
 	mov	esi, [esp+8]
+	mov	edi, [esp+12]
 
 	; check user existance
 	push	esi
-	call	user_exists	; user_exists(argv[1])
+	call	user_exists	; user_exists(userid)
 	add	esp, 4		; clean stack
 	
 	test	eax, eax
-	jnz	.not_exists	; if (file exists) {
-	push	nok		;   exit[0] = nok
+	jnz	.user_not_exists; if (file exists) {
+	push	nok_id		;   exit[0] = nok
 	call	print		;   print error
 	add	esp, 4		;   clean stack
 	mov	eax, 1		;   return val = 1
 	jmp	.exit
-.not_exists:
+.user_not_exists:
+	; check friend existance
+	push	edi
+	call	user_exists	; user_exists(friendid)
+	add	esp, 4		; clean stack
+	
+	test	eax, eax
+	jnz	.frnd_not_exists; if (file exists) {
+	push	nok_frnd	;   exit[0] = nok
+	call	print		;   print error
+	add	esp, 4		;   clean stack
+	mov	eax, 1		;   return val = 1
+	jmp	.exit
+.frnd_not_exists:
+
+
+
+
+
+
+
 	; make dir
 	push	esi		; mkdir[0] = arg[1]
 	call	mkdir
@@ -88,6 +112,7 @@ create_user:
 	xor	eax, eax	; return val = 0
 
 .exit:
-	pop	esi
+	push	edi
+	push	esi
 	pop	ebp
 	ret			; return
