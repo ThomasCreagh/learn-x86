@@ -21,7 +21,7 @@ section .text
 ; Create files for user init.
 ;
 ; Input:
-;   [esp+8] - user id
+;   [ebp+8] - user id
 ; Output:
 ;   eax - sucessful or not
 ;
@@ -33,7 +33,7 @@ create_user:
 	mov	ebp, esp
 	push	esi
 	; save userid
-	mov	esi, [esp+8]
+	mov	esi, [ebp+8]
 
 	; check user existance
 	push	esi

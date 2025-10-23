@@ -1,11 +1,15 @@
-global exit
+extern strlen
+
+global print
 ; -----------------------------------------------------------------------------
-; exit
+; print
 ; -----------------------------------------------------------------------------
-; exits create_user program with exit text if 0 print stdout if 1 print stderr
+; prints null terminating string
 ;
 ; Input:
-;   [esp+8]  - exit code
+;   [ebp+8] - exit message
+; Output:
+;   eax - sys print return call
 ;
 ; Registers used:
 ;   eax - distructive
@@ -13,10 +17,19 @@ global exit
 ;   ecx - distructive
 ;   edx - distructive
 ; -----------------------------------------------------------------------------
-exit:
+print:
 	push	ebp
 	mov	ebp, esp	
 
-	mov	eax, 1		; sys_exit
-	mov	ebx, [ebp+8]	; exit code
+	push	dword [ebp+8]	; 32-bit pointer
+	call	strlen		; len(arg[1])
+	add	esp, 4
+	mov	edx, eax	; lenght of arg[1]
+
+	mov	eax, 4		; sys_write
+	mov	ebx, 1		; stdout
+	mov	ecx, [ebp+8]	; address of string
 	int	0x80		; kernal interupt
+
+	pop	ebp
+	ret

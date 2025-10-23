@@ -6,7 +6,7 @@ section .text
 ; -----------------------------------------------------------------------------
 ; Computes the length of a null-terminated string.
 ;
-; Input: [esp+8] - pointer to the null-terminated string
+; Input: [ebp+8] - pointer to the null-terminated string
 ; Output: eax    - length of the string
 ;
 ; Registers used:

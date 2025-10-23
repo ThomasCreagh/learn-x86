@@ -14,9 +14,9 @@ section .text
 ; Addes the "/wall.txt\0" or "/friends.txt\0" to a given 
 ;
 ; Input:
-;   [esp+8]   - filename
-;   [exp+12]  - 0 for wall, 1 for friends
-;   [esp+16]  - buffer
+;   [ebp+8]   - filename
+;   [ebp+12]  - 0 for wall, 1 for friends
+;   [ebp+16]  - buffer
 ; Output: eax - pointer to the destination str null byte
 ;
 ; Registers used:

@@ -10,9 +10,9 @@ section .text
 ; Concatanates two strings together
 ;
 ; Input:
-;   [esp+8]  - pointer to the destination null terminating str
-;   [esp+12]  - pointer to the source null terminating str
-;   [esp+16] - OPTIONAL if destination length known (0 if not known)
+;   [ebp+8]  - pointer to the destination null terminating str
+;   [ebp+12]  - pointer to the source null terminating str
+;   [ebp+16] - OPTIONAL if destination length known (0 if not known)
 ; Output: eax - pointer to the destination str null byte
 ;
 ; Registers used:

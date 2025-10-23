@@ -7,8 +7,8 @@ section .text
 ; Copys string from source address to destinations address
 ;
 ; Input:
-;   [esp+8]  - pointer to the destination null terminating str
-;   [esp+12] - pointer to the source null terminating str
+;   [ebp+8]  - pointer to the destination null terminating str
+;   [ebp+12] - pointer to the source null terminating str
 ; Output: eax - pointer to the destination str null byte
 ;
 ; Registers used:

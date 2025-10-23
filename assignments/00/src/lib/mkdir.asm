@@ -7,7 +7,7 @@ section .text
 ; Makes a directory
 ;
 ; Input:
-;   [esp+8] - dirname 
+;   [ebp+8] - dirname 
 ; Output: eax - pointer to the destination str null byte
 ;
 ; Registers used:

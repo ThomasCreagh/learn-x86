@@ -6,7 +6,7 @@ section .text
 ; -----------------------------------------------------------------------------
 ; Computes the length of a null-terminated string.
 ;
-; Input: [esp+8] - user id
+; Input: [ebp+8] - user id
 ; Output: eax    - if user exists it returns 0 else -1 if not exists
 ;
 ; Registers used:
