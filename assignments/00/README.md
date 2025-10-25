@@ -1,7 +1,8 @@
 http://www.posix.nl/linuxassembly/nasmdochtml/nasmdoca.html
 
 TODOS:
-- [ ] Read contents of a file
+- [x] Read contents of a file
+- [ ] Read line by line
 - [ ] Parse file contenets to see if a user is in the file
 - [ ] Make a "user_in_file" subroutine
 - [ ] Append to a file
