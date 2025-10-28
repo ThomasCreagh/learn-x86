@@ -1,6 +1,7 @@
 extern user_exists
 extern get_txt
 extern print
+extern append_user
 
 global add_friend
 
@@ -24,7 +25,7 @@ section .text
 ;   [esp+8]  - user id
 ;   [esp+12] - friend id
 ; Output:
-;   eax - sucessful or not
+;   eax - 0 sucessful or 1 not
 ;
 ; Registers used:
 ;   eax - return value / temporary
@@ -35,9 +36,9 @@ add_friend:
 	push	esi
 	push	edi
 	; save user id
-	mov	esi, [esp+8]
+	mov	esi, [ebp+8]
 	; save friend id
-	mov	edi, [esp+12]
+	mov	edi, [ebp+12]
 
 	; check user existance
 	push	esi
@@ -75,12 +76,13 @@ add_friend:
 
 	; check if user in file
 	push	edi		; user_in_file->friend	
-	push	eax		; user_in_file->filepath
+	push	buffer		; user_in_file->filepath
 	call	user_in_file
 	add	esp, 8		; clean stack
 	cmp	eax, 0
 	js	.exit
 	je	.not_friend
+
 	push	nok_frnded	;   print[0] = nok_frnded
 	call	print		;   print error
 	add	esp, 4		;   clean stack
@@ -88,11 +90,14 @@ add_friend:
 	jmp	.exit
 
 .not_friend:
+	push	edi		; append_user->friend
+	push 	buffer		; append_user->filepath
+	call	append_user
+	add	esp, 8		; clean stack
 
-
-
+	xor	eax, eax
 .exit:
-	push	edi
-	push	esi
+	pop	edi
+	pop	esi
 	pop	ebp
 	ret			; return
