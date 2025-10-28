@@ -1,14 +1,13 @@
 extern user_exists
 extern get_txt
-extern mkdir
-extern touch
 extern print
 
-global	add_friend
+global add_friend
 
 section .data
 	nok_user	db	"nok: user ’$id’ does not exist", 0
 	nok_frnd	db	"nok: user ’$friend’ does not exist", 0
+	nok_frnded	db	"nok: user ’$friend’ exists in ’$id’'s friend list", 0
 	ok		db	"ok", 0
 
 
@@ -46,71 +45,51 @@ add_friend:
 	add	esp, 4		; clean stack
 	
 	test	eax, eax
-	jnz	.user_not_exists; if (file exists) {
+	jnz	.user_exists	; if (file exists) {
 	push	nok_user	;   print[0] = nok_user
 	call	print		;   print error
 	add	esp, 4		;   clean stack
 	mov	eax, 1		;   return val = 1
 	jmp	.exit
-.user_not_exists:
+.user_exists:
 	; check friend existance
 	push	edi
 	call	user_exists	; user_exists(friendid)
 	add	esp, 4		; clean stack
 	
 	test	eax, eax
-	jnz	.frnd_not_exists; if (file exists) {
+	jnz	.frnd_exists	; if (file exists) {
 	push	nok_frnd	;   print[0] = nok_frnd
 	call	print		;   print error
 	add	esp, 4		;   clean stack
 	mov	eax, 1		;   return val = 1
 	jmp	.exit
-.frnd_not_exists:
+.frnd_exists:
 
-
-
-
-
-
-
-	; make dir
-	push	esi		; mkdir[0] = arg[1]
-	call	mkdir
-	add	esp, 4		; clean stack
-	
-	; make wall.txt
+	; get friends.txt
 	push	buffer		; get_txt[2] = buffer
-	push	0		; get_txt[1] = 0	// wall file
+	push	1		; get_txt[1] = 1	// friend file
 	push	esi		; get_txt[0] = user id
 	call	get_txt
-	add	esp, 12
+	add	esp, 12		; clean stack
 
-	push	buffer		; touch[0] = buffer
-	call	touch
-	add	esp, 4		; clean stack
+	; check if user in file
+	push	edi		; user_in_file->friend	
+	push	eax		; user_in_file->filepath
+	call	user_in_file
+	add	esp, 8		; clean stack
+	cmp	eax, 0
+	js	.exit
+	je	.not_friend
+	push	nok_frnded	;   print[0] = nok_frnded
+	call	print		;   print error
+	add	esp, 4		;   clean stack
+	mov	eax, 1		;   return val = 1
+	jmp	.exit
 
-	; clear buffer
-	;mov	edi, buffer
-	;mov	ecx, 32        ; 128 bytes / 4 bytes per store = 32
-	;xor	eax, eax       ; clear 32-bit register
-	;rep	stosd          ; store EAX into [EDI], 4 bytes at a time
+.not_friend:
 
-	; make friends.txt
-	push	buffer		; get_txt[2] = buffer
-	push	1		; get_txt[1] = 0	// wall file
-	push	esi		; get_txt[0] = user id
-	call	get_txt
-	add	esp, 12
 
-	push	buffer		; touch[0] = buffer
-	call	touch
-	add	esp, 4		; clean stack
-
-	; return successfully
-	push	ok		; print[0] = ok
-	call	print
-	add	esp, 4		; clean stack
-	xor	eax, eax	; return val = 0
 
 .exit:
 	push	edi

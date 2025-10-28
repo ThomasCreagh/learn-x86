@@ -1,9 +1,15 @@
-extern read
+extern open
+extern close
+extern read_line
+extern strcmp
 
 global user_in_file
 
 section .bss
-	buffer	resb	12
+	file_buffer	resb	1024
+	line_buffer	resb	256
+	file_offset	resd	1      ; reserve 4 bytes (int)
+	bytes_read	resd	1      ; reserve 4 bytes (int)
 
 section .text
 ; -----------------------------------------------------------------------------
@@ -12,64 +18,65 @@ section .text
 ; Reads the full contents of a file
 ;
 ; Input:
-;   [ebp+8]   - filename
-; Output: eax - bytes read or neg errors
+;   [ebp+8]   - filename (string)
+;   [ebp+12]  - user     (string)
+; Output: eax - 0 for false 1 for true, neg for error
 ;
 ; Registers used:
 ; -----------------------------------------------------------------------------
-read:
+user_in_file:
 	push	ebp
 	mov	ebp, esp
 	push	ebx
 	push	esi
 	push	edi
 
-	mov	esi, [ebp+8]
-
 	; open file
-	mov	eax, 5		; sys_open
-	mov	ebx, esi	; filename pointer
-	mov	ecx, 0000o	; flags: O_RDONLY
-	int	0x80
+	push	[ebp+8]			; open->filename = filename
+	call	open
+	add	esp, 4
 
-	cmp	eax, 0
-	js	.return		; if error (eax < 0)
+	; init vars
+	mov	esi, eax		; fd = fd
+	mov	[file_offset], 0	; file_offset = 0
+	mov	[bytes_read], 0		; bytes_read = 0
 
-	mov	esi, eax	; save file descriptor
+.loop:
+	; read lines
+	push	bytes_read		; read_line->bytes_read
+	push	file_offset		; read_line->file_offset
+	push	file_buffer		; read_line->file_buffer
+	push	line_buffer		; read_line->line_buffer
+	push	esi			; read_line->fd
+	call	read_line
+	add	esp, 20			; clean stack
+	test	eax, eax		; chekcing if bytes written is 0
+	js	.return			; if negative, exit early with eax = error code
+	jz	.not_equal
 
-	; get file size
-	mov	eax, 19		; sys_lseek
-	mov	ebx, esi	; file descriptor
-	xor	ecx, ecx	; offset = 0
-	mov	edx, 2		; SEEK_END = 2
-	int	0x80
+	; string compare
+	push	line_buffer		; strcmp->read_line
+	push	[ebp+12]		; strcmp->user
+	call	strcmp
+	add	esp, 8			; clean stack
 
-	mov	edi, eax	; size = return value
+	test	eax, eax		; check if equal
+	jz	.equal
 
-	; reset file descriptor to start
-	mov	eax, 19		; sys_lseek
-	mov	ebx, esi	; file descriptor
-	xor	ecx, ecx	; offset = 0
-	mov	edx, 0		; SEEK_SET =0 
-	int	0x80
+	jmp	.loop
 
-	; read entire file to buffer
-	mov	eax, 3		; sys_read
-	mov	ebx, esi	; file descriptor
-	mov	ecx, [ebp+12]	; buffer
-	mov	edx, edi	; size
-	int	0x80
+.not_equal:
+	xor	eax, eax
+	jmp	.return
 
-	mov	edi, eax	; read bytes
-
-	; close file
-	mov	eax, 6 ; sys_close
-	mov	ebx, esi
-	int	0x80
-
-	mov	eax, edi
+.equal:
+	mov	eax, 1
 
 .return:
+	push	esi			; close->fd = fd
+	call	close
+	add	esp, 4
+
 	pop	edi
 	pop	esi
 	pop	ebx
