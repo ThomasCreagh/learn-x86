@@ -1,5 +1,5 @@
-NASMFLAGS = -f elf32
-CFLAGS = -m32 -nostartfiles
+NASMFLAGS = -f elf32 -g
+CFLAGS = -m32 -g -nostartfiles
 
 BIN_DIR = bin
 
@@ -11,9 +11,12 @@ COMMON_SRCS = \
     src/lib/io/print.asm \
     src/lib/io/read.asm \
     src/lib/io/read_line.asm \
+    src/lib/io/write.asm \
     src/lib/string/strcat.asm \
+    src/lib/string/strcmp.asm \
     src/lib/string/strcpy.asm \
     src/lib/string/strlen.asm \
+    src/lib/append_user.asm \
     src/lib/exit.asm \
     src/lib/get_txt.asm \
     src/lib/mkdir.asm \
@@ -21,8 +24,8 @@ COMMON_SRCS = \
     src/lib/user_exists.asm \
     src/lib/user_in_file.asm
 
-CREATE_USER_MAIN = src/create_user_main.asm
 ADD_FRIEND_MAIN  = src/add_friend_main.asm
+CREATE_USER_MAIN = src/create_user_main.asm
 
 COMMON_OBJS = $(COMMON_SRCS:.asm=.o)
 CREATE_USER_OBJS = $(COMMON_OBJS) $(CREATE_USER_MAIN:.asm=.o)

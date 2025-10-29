@@ -36,8 +36,8 @@ read_line:
 	; yes -> read 1024 bytes from file
 .read:
 	push	1024			; read->size = 1024
-	push	[ebp+16]		; read->buffer = file buffer
-	push	[ebp+8]			; read->file_descriptor = fd
+	push	dword [ebp+16]		; read->buffer = file buffer
+	push	dword [ebp+8]			; read->file_descriptor = fd
 	call	read
 	add	esp, 12			; clean stack
 	mov	edx, eax		; bytes_read = read return
@@ -59,7 +59,7 @@ read_line:
 	mov	[ebx+esi], al
 	inc	edi			; file offset++
 	inc	esi			; line offeset++
-	cmp	al, '\n'		; check if byte was a next line character
+	cmp	al, 10			; check if byte was a next line character
 	je	.done
 	jmp	.loop 
 .done:

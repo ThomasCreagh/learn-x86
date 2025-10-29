@@ -1,4 +1,5 @@
 extern user_exists
+extern user_in_file
 extern get_txt
 extern print
 extern append_user

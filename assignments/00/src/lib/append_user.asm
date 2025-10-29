@@ -30,27 +30,27 @@ append_user:
 	push	edi
 
 	; open file
-	push	[ebp+8]
+	push	dword [ebp+8]
 	call	open
 	add	esp, 4
-	mov	esi, eax	; fd = file descriptor
+	mov	esi, eax		; fd = file descriptor
 
 	; cpy user into buffer to add \n
-	push	[ebp+12]
+	push	dword [ebp+12]
 	push	user_str
 	call	strcpy
 	add	esp, 8
 
 	; replace null byte with user str with \n
-	mov	[eax], '\n'	; dest null byte = '\n'
+	mov	byte [eax], 10		; dest null byte = '\n'
 	inc	eax
 
 	; write to file
-	push	eax		; write->size
-	push	user_str	; write->size
-	push	esi		; write->fd
+	push	eax			; write->size
+	push	user_str		; write->size
+	push	esi			; write->fd
 	call	write
-	add	esp, 12		; clean stack
+	add	esp, 12			; clean stack
 	mov	edi, eax
 	
 	; close file

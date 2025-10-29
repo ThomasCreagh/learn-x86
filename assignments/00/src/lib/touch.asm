@@ -23,7 +23,7 @@ touch:
 	push	ebx
 
 	; open and create file
-	push	[ebp+8]
+	push	dword [ebp+8]
 	call	open
 	add	esp, 4
 

@@ -32,14 +32,14 @@ user_in_file:
 	push	edi
 
 	; open file
-	push	[ebp+8]			; open->filename = filename
+	push	dword [ebp+8]			; open->filename = filename
 	call	open
 	add	esp, 4
 
 	; init vars
 	mov	esi, eax		; fd = fd
-	mov	[file_offset], 0	; file_offset = 0
-	mov	[bytes_read], 0		; bytes_read = 0
+	mov	dword [file_offset], 0	; file_offset = 0
+	mov	dword [bytes_read], 0		; bytes_read = 0
 
 .loop:
 	; read lines
@@ -56,7 +56,7 @@ user_in_file:
 
 	; string compare
 	push	line_buffer		; strcmp->read_line
-	push	[ebp+12]		; strcmp->user
+	push	dword [ebp+12]		; strcmp->user
 	call	strcmp
 	add	esp, 8			; clean stack
 

@@ -18,7 +18,7 @@ section .text
 ;   [esp] - number of args
 ;   [esp+4] - program name
 ;   [esp+8] - user id
-; Output: eax - length of the string
+; Output: ok or nok
 ;
 ; Registers used:
 ;   eax - return value / temporary
