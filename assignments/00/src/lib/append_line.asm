@@ -3,15 +3,15 @@ extern close
 extern strcpy
 extern write
 
-global append_user
+global append_line
 
 section .bss
-	user_str	resb	128
+	line	resb	256
 
 
 section .text
 ; -----------------------------------------------------------------------------
-; append_user
+; append_line
 ; -----------------------------------------------------------------------------
 ; Appends user to file
 ;
@@ -22,7 +22,7 @@ section .text
 ;
 ; Registers used:
 ; -----------------------------------------------------------------------------
-append_user:
+append_line:
 	push	ebp
 	mov	ebp, esp
 	push	ebx
@@ -38,18 +38,18 @@ append_user:
 
 	; cpy user into buffer to add \n
 	push	dword [ebp+12]
-	push	user_str
+	push	line
 	call	strcpy
 	add	esp, 8
 
 	; replace null byte with user str with \n
 	mov	byte [eax], 10		; dest null byte = '\n'
-	sub	eax, user_str		; lenght
+	sub	eax, line		; lenght
 	inc	eax			; length +1
 
 	; write to file
 	push	eax			; write->size
-	push	user_str		; write->size
+	push	line			; write->line
 	push	esi			; write->fd
 	call	write
 	add	esp, 12			; clean stack

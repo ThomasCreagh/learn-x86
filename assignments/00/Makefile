@@ -8,6 +8,7 @@ DEBUG_DIR = debug
 COMMON_SRCS = \
     src/core/add_friend.asm \
     src/core/create_user.asm \
+    src/core/post_message.asm \
     src/lib/io/close.asm \
     src/lib/io/open.asm \
     src/lib/io/print.asm \
@@ -18,7 +19,7 @@ COMMON_SRCS = \
     src/lib/string/strcmp.asm \
     src/lib/string/strcpy.asm \
     src/lib/string/strlen.asm \
-    src/lib/append_user.asm \
+    src/lib/append_line.asm \
     src/lib/exit.asm \
     src/lib/get_txt.asm \
     src/lib/mkdir.asm \
@@ -28,18 +29,23 @@ COMMON_SRCS = \
 
 ADD_FRIEND_MAIN  = src/add_friend_main.asm
 CREATE_USER_MAIN = src/create_user_main.asm
+POST_MESSAGE_MAIN  = src/post_message_main.asm
 
 COMMON_OBJS = $(COMMON_SRCS:.asm=.o)
+
 CREATE_USER_OBJS = $(COMMON_OBJS) $(CREATE_USER_MAIN:.asm=.o)
 ADD_FRIEND_OBJS  = $(COMMON_OBJS) $(ADD_FRIEND_MAIN:.asm=.o)
+POST_MESSAGE_OBJS  = $(COMMON_OBJS) $(POST_MESSAGE_MAIN:.asm=.o)
 
-CREATE_USER_BIN = $(BIN_DIR)/create_user
 ADD_FRIEND_BIN  = $(BIN_DIR)/add_friend
+CREATE_USER_BIN = $(BIN_DIR)/create_user
+POST_MESSAGE_BIN  = $(BIN_DIR)/post_message
 
-CREATE_USER_DEBUG = $(DEBUG_DIR)/create_user
 ADD_FRIEND_DEBUG  = $(DEBUG_DIR)/add_friend
+CREATE_USER_DEBUG = $(DEBUG_DIR)/create_user
+POST_MESSAGE_DEBUG  = $(DEBUG_DIR)/post_message
 
-all: $(CREATE_USER_BIN) $(ADD_FRIEND_BIN) $(CREATE_USER_DEBUG) $(ADD_FRIEND_DEBUG)
+all: $(CREATE_USER_BIN) $(ADD_FRIEND_BIN) $(POST_MESSAGE_BIN) $(CREATE_USER_DEBUG) $(ADD_FRIEND_DEBUG) $(POST_MESSAGE_DEBUG)
 
 $(CREATE_USER_BIN): $(CREATE_USER_OBJS)
 	@mkdir -p $(BIN_DIR)
@@ -55,10 +61,17 @@ $(ADD_FRIEND_DEBUG): $(ADD_FRIEND_OBJS)
 	@mkdir -p $(DEBUG_DIR)
 	ld $(LDFLAGS) -o $@ $^
 
+$(POST_MESSAGE_BIN): $(POST_MESSAGE_OBJS)
+	@mkdir -p $(BIN_DIR)
+	gcc $(GCCFLAGS) -o $@ $^
+$(POST_MESSAGE_DEBUG): $(POST_MESSAGE_OBJS)
+	@mkdir -p $(DEBUG_DIR)
+	ld $(LDFLAGS) -o $@ $^
+
 
 %.o: %.asm
 	nasm $(NASMFLAGS) $< -o $@
 
 clean:
-	rm -f $(COMMON_OBJS) $(CREATE_USER_MAIN:.asm=.o) $(ADD_FRIEND_MAIN:.asm=.o)
+	rm -f $(COMMON_OBJS) $(CREATE_USER_MAIN:.asm=.o) $(ADD_FRIEND_MAIN:.asm=.o) $(POST_MESSAGE_MAIN:.asm=.o)
 

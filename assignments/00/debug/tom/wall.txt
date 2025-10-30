@@ -1,0 +1,6 @@
+lucia: hello
+lucia: this is another message
+bob: this is another message
+bob: this is another message from BOBcat tom/wall.txt cat tom/wall.txt !
+bob: this is another bob messsage :cool face emoji thing : yes
+lucia: hi lucia

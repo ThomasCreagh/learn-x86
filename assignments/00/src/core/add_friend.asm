@@ -2,7 +2,7 @@ extern user_exists
 extern user_in_file
 extern get_txt
 extern print
-extern append_user
+extern append_line
 
 global add_friend
 
@@ -91,9 +91,9 @@ add_friend:
 	jmp	.exit
 
 .not_friend:
-	push	edi		; append_user->friend
-	push 	buffer		; append_user->filepath
-	call	append_user
+	push	edi		; append_line->friend
+	push 	buffer		; append_line->filepath
+	call	append_line
 	add	esp, 8		; clean stack
 
 	push	ok		;   print[0] = ok
