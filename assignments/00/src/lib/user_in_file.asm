@@ -32,14 +32,15 @@ user_in_file:
 	push	edi
 
 	; open file
-	push	dword [ebp+8]			; open->filename = filename
+	push	0			; append
+	push	dword [ebp+8]		; open->filename = filename
 	call	open
-	add	esp, 4
+	add	esp, 8
 
 	; init vars
 	mov	esi, eax		; fd = fd
 	mov	dword [file_offset], 0	; file_offset = 0
-	mov	dword [bytes_read], 0		; bytes_read = 0
+	mov	dword [bytes_read], 0	; bytes_read = 0
 
 .loop:
 	; read lines
@@ -53,9 +54,10 @@ user_in_file:
 	test	eax, eax		; chekcing if bytes written is 0
 	js	.return			; if negative, exit early with eax = error code
 	jz	.not_equal
+	mov	byte [line_buffer+eax-1], 0	; replace end of buffer (\n) with a null byte
 
 	; string compare
-	push	line_buffer		; strcmp->read_line
+	push	line_buffer	; strcmp->read_line
 	push	dword [ebp+12]		; strcmp->user
 	call	strcmp
 	add	esp, 8			; clean stack
@@ -66,17 +68,21 @@ user_in_file:
 	jmp	.loop
 
 .not_equal:
-	xor	eax, eax
-	jmp	.return
-
-.equal:
-	mov	eax, 1
-
-.return:
 	push	esi			; close->fd = fd
 	call	close
 	add	esp, 4
 
+	xor	eax, eax
+	jmp	.return
+
+.equal:
+	push	esi			; close->fd = fd
+	call	close
+	add	esp, 4
+
+	mov	eax, 1
+
+.return:
 	pop	edi
 	pop	esi
 	pop	ebx

@@ -30,9 +30,10 @@ append_user:
 	push	edi
 
 	; open file
+	push	2			; append
 	push	dword [ebp+8]
 	call	open
-	add	esp, 4
+	add	esp, 8
 	mov	esi, eax		; fd = file descriptor
 
 	; cpy user into buffer to add \n
@@ -43,7 +44,8 @@ append_user:
 
 	; replace null byte with user str with \n
 	mov	byte [eax], 10		; dest null byte = '\n'
-	inc	eax
+	sub	eax, user_str		; lenght
+	inc	eax			; length +1
 
 	; write to file
 	push	eax			; write->size

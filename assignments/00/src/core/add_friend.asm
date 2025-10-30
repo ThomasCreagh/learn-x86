@@ -47,7 +47,7 @@ add_friend:
 	add	esp, 4		; clean stack
 	
 	test	eax, eax
-	jnz	.user_exists	; if (file exists) {
+	jz	.user_exists	; if (file exists) {
 	push	nok_user	;   print[0] = nok_user
 	call	print		;   print error
 	add	esp, 4		;   clean stack
@@ -60,7 +60,7 @@ add_friend:
 	add	esp, 4		; clean stack
 	
 	test	eax, eax
-	jnz	.frnd_exists	; if (file exists) {
+	jz	.frnd_exists	; if (file exists) {
 	push	nok_frnd	;   print[0] = nok_frnd
 	call	print		;   print error
 	add	esp, 4		;   clean stack
@@ -96,6 +96,9 @@ add_friend:
 	call	append_user
 	add	esp, 8		; clean stack
 
+	push	ok		;   print[0] = ok
+	call	print		;   print ok
+	add	esp, 4		;   clean stack
 	xor	eax, eax
 .exit:
 	pop	edi

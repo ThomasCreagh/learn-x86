@@ -37,25 +37,25 @@ read_line:
 .read:
 	push	1024			; read->size = 1024
 	push	dword [ebp+16]		; read->buffer = file buffer
-	push	dword [ebp+8]			; read->file_descriptor = fd
+	push	dword [ebp+8]		; read->file_descriptor = fd
 	call	read
 	add	esp, 12			; clean stack
 	mov	edx, eax		; bytes_read = read return
 	cmp	eax, 0
-	mov	eax, [ebp+16]		; eax = file buffer
-	mov	ebx, [ebp+12]		; ebx = line buffer
 	je	.done			; if read return == 0 goto .done
 	jl	.return			; if read return < 0 goto .return
 	mov	edi, 0			; file offset = 0
 
 .offset_not_zero:
+	mov	ecx, [ebp+16]		; eax = file buffer
+	mov	ebx, [ebp+12]		; ebx = line buffer
 	; no -> continue reading bytes from offset into buffer until \n or EOF
 .loop:
 	cmp	esi, 255		; if line offset >= 256 - 1 (for null byte) goto .overflow
 	jge	.overflow
 	cmp	edi, edx		; if file offset >= 1024 goto .read
 	jge	.read
-	mov	al, [eax+edi]		; read 1 byte from file buffer to line buffer
+	mov	al, [ecx+edi]		; read 1 byte from file buffer to line buffer
 	mov	[ebx+esi], al
 	inc	edi			; file offset++
 	inc	esi			; line offeset++
@@ -63,6 +63,7 @@ read_line:
 	je	.done
 	jmp	.loop 
 .done:
+	mov	ebx, [ebp+12]		; ebx = line buffer
 	mov	byte [ebx+esi], 0	; set end of buffer to a null byte
 	; return in eax (bytes or error)
 	mov	eax, esi		; return line length

@@ -23,9 +23,10 @@ touch:
 	push	ebx
 
 	; open and create file
+	push	1			; create and wronly
 	push	dword [ebp+8]
 	call	open
-	add	esp, 4
+	add	esp, 8
 
 	; close file
 	push	eax

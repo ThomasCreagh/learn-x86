@@ -1,7 +1,9 @@
 NASMFLAGS = -f elf32 -g
-CFLAGS = -m32 -g -nostartfiles
+GCCFLAGS = -m32 -g -nostartfiles
+LDFLAGS = -m elf_i386
 
 BIN_DIR = bin
+DEBUG_DIR = debug
 
 COMMON_SRCS = \
     src/core/add_friend.asm \
@@ -34,20 +36,29 @@ ADD_FRIEND_OBJS  = $(COMMON_OBJS) $(ADD_FRIEND_MAIN:.asm=.o)
 CREATE_USER_BIN = $(BIN_DIR)/create_user
 ADD_FRIEND_BIN  = $(BIN_DIR)/add_friend
 
-all: $(CREATE_USER_BIN) $(ADD_FRIEND_BIN)
+CREATE_USER_DEBUG = $(DEBUG_DIR)/create_user
+ADD_FRIEND_DEBUG  = $(DEBUG_DIR)/add_friend
+
+all: $(CREATE_USER_BIN) $(ADD_FRIEND_BIN) $(CREATE_USER_DEBUG) $(ADD_FRIEND_DEBUG)
 
 $(CREATE_USER_BIN): $(CREATE_USER_OBJS)
 	@mkdir -p $(BIN_DIR)
-	gcc $(CFLAGS) -o $@ $^
+	gcc $(GCCFLAGS) -o $@ $^
+$(CREATE_USER_DEBUG): $(CREATE_USER_OBJS)
+	@mkdir -p $(DEBUG_DIR)
+	ld $(LDFLAGS) -o $@ $^
 
 $(ADD_FRIEND_BIN): $(ADD_FRIEND_OBJS)
 	@mkdir -p $(BIN_DIR)
-	gcc $(CFLAGS) -o $@ $^
+	gcc $(GCCFLAGS) -o $@ $^
+$(ADD_FRIEND_DEBUG): $(ADD_FRIEND_OBJS)
+	@mkdir -p $(DEBUG_DIR)
+	ld $(LDFLAGS) -o $@ $^
+
 
 %.o: %.asm
 	nasm $(NASMFLAGS) $< -o $@
 
 clean:
 	rm -f $(COMMON_OBJS) $(CREATE_USER_MAIN:.asm=.o) $(ADD_FRIEND_MAIN:.asm=.o)
-	rm -f $(CREATE_USER_BIN) $(ADD_FRIEND_BIN)
 

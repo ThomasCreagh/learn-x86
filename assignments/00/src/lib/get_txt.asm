@@ -26,6 +26,8 @@ section .text
 get_txt:
 	push	ebp
 	mov	ebp, esp
+	push	esi
+	push	edi
 
 	push	dword [ebp+8]	; strcpy[1] = filename
 	push	dword [ebp+16]	; strcpy[0] = buffer
@@ -34,19 +36,23 @@ get_txt:
 	
 	sub	eax, [ebp+16]	; term_buffer - buffer
 
-	push	eax		; strcat[2] = destination str len
+	mov	esi, eax	; len = destination str len
 
 	mov	ecx, [ebp+12]	; file option
 	test	ecx, ecx
 	je	.wall
-	push	friends		; strcat[1] = "/friends.txt\0"
+	mov	edi, friends	; file_extention = "/friends.txt\0"
 	jmp	.friends
 .wall:
-	push	wall		; strcat[1] = "/wall.txt\0"
+	mov	edi, wall	; file_extention = "/wall.txt\0"
 .friends:
-	push	dword [ebp+16]	; strcat[0] = buffer
+	push	esi		; strcat[2] = len
+	push	edi		; strcat[1] = source (wall or friend)
+	push	dword [ebp+16]	; strcat[0] = destination (filename buffer)
 	call	strcat		; strcat()
 	add	esp, 12
 
+	pop	edi
+	pop	esi
 	pop ebp
 	ret

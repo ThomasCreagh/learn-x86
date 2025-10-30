@@ -36,8 +36,11 @@ _start:
 	push	1		;   exit[0] = 1
 	call	exit		; }
 .arg_given:
-	push	dword [esp+8]
-	push	dword [esp+12]
+	mov	esi, [esp+8]	; userid
+	mov	edi, [esp+12]	; friendid
+
+	push	edi
+	push	esi
 	call	add_friend
 	add	esp, 8
 
