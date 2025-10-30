@@ -11,7 +11,7 @@ section .data
 	end_of_file		db	"end_of_file", 10, 0
 
 section .bss
-	filename_buffer		resb	128
+	filename_buffer		resb	256
 
 section .text
 ; -----------------------------------------------------------------------------

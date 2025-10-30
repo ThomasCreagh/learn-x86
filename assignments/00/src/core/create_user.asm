@@ -12,7 +12,7 @@ section .data
 
 
 section .bss
-	buffer	resb	128
+	buffer	resb	256
 
 section .text
 ; -----------------------------------------------------------------------------
@@ -66,7 +66,7 @@ create_user:
 
 	; clear buffer
 	;mov	edi, buffer
-	;mov	ecx, 32        ; 128 bytes / 4 bytes per store = 32
+	;mov	ecx, 32        ; 256 bytes / 4 bytes per store = 32
 	;xor	eax, eax       ; clear 32-bit register
 	;rep	stosd          ; store EAX into [EDI], 4 bytes at a time
 

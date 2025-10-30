@@ -14,7 +14,7 @@ section .data
 
 
 section .bss
-	buffer	resb	128
+	buffer	resb	256
 
 section .text
 ; -----------------------------------------------------------------------------

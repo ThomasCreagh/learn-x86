@@ -17,7 +17,7 @@ section .data
 	semicolon_space		db	": ", 0
 
 section .bss
-	filename_buffer		resb	128
+	filename_buffer		resb	256
 	message_buffer		resb	256
 
 section .text
