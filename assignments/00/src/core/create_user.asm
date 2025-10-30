@@ -7,8 +7,8 @@ extern print
 global	create_user
 
 section .data
-	nok	db	"nok: user already exists", 0
-	ok	db	"ok: user created!", 0
+	nok	db	"nok: user already exists",10 , 0
+	ok	db	"ok: user created!", 10, 0
 
 
 section .bss

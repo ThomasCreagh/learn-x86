@@ -6,7 +6,7 @@ extern create_user
 global	_start
 
 section .data
-	nok	db	"nok: no identifier provided", 0
+	nok	db	"nok: no identifier provided", 10, 0
 
 section .text
 ; -----------------------------------------------------------------------------

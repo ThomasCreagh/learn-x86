@@ -7,10 +7,10 @@ extern append_line
 global add_friend
 
 section .data
-	nok_user	db	"nok: user ’$id’ does not exist", 0
-	nok_frnd	db	"nok: user ’$friend’ does not exist", 0
-	nok_frnded	db	"nok: user ’$friend’ exists in ’$id’'s friend list", 0
-	ok		db	"ok", 0
+	nok_user	db	"nok: user ’$id’ does not exist", 10, 0
+	nok_frnd	db	"nok: user ’$friend’ does not exist", 10, 0
+	nok_frnded	db	"nok: user ’$friend’ exists in ’$id’'s friend list",10 , 0
+	ok		db	"ok", 10, 0
 
 
 section .bss
