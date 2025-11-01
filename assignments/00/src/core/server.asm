@@ -56,8 +56,7 @@ server:
 	call	create_user
 	add	esp, 4
 	test	eax, eax
-	jz	.loop
-	jmp	.error
+	jmp	.loop
 
 .add:
 	push	add_str
@@ -73,8 +72,7 @@ server:
 	call	add_friend
 	add	esp, 8
 	test	eax, eax
-	jz	.loop
-	jmp	.error
+	jmp	.loop
 
 .post:
 	push	post_str
@@ -91,8 +89,7 @@ server:
 	call	post_message
 	add	esp, 12
 	test	eax, eax
-	jz	.loop
-	jmp	.error
+	jmp	.loop
 
 .display:
 	push	display_str
@@ -107,8 +104,7 @@ server:
 	call	display_wall
 	add	esp, 4
 	test	eax, eax
-	jz	.loop
-	jmp	.error
+	jmp	.loop
 
 .bad_request:
 	push	nok

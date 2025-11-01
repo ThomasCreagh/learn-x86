@@ -31,61 +31,50 @@ tokenize_str:
 	mov	al, [esi+edi]		; read 1 byte from buffer to token buffer
 	test	al, al
 	jz	.eof
-	cmp	al, 32			; check if byte was space
-	je	.skip
-	cmp	al, 10			; check if byte was a next line char
-	je	.skip
-	cmp	al, 13			; check if byte was carage return
-	je	.skip
-	jmp	.end_trim
-.skip:
-	inc	edi			; buffer++
+	cmp	al, 32			; check if byte was a not a non-text, trimable character
+	jg	.end_trim
+	inc	edi
 	jmp	.trim
-
 .end_trim:
-
+	; after trim
 	mov	ecx, esi
 	add	ecx, edi
 	mov	al, [esi+edi]		; read 1 byte from buffer to token buffer
 	cmp	al, 34			; check if the first byte is a quote
 	jne	.normloop		; if not go to the normal loop
 	inc	ecx
+	inc	edi
 .quotloop:
 	mov	al, [esi+edi]		; read 1 byte from buffer to token buffer
-	inc	edi			; offset++
 	test	al, al
 	jz	.done
 	cmp	al, 34			; check if byte was quote mark
-	jne	.quotloop
-
-	; after loop
-	mov	byte [esi+edi-1], 0	; set the quote to a null byte
-	inc 	edi			; incement the offset past the space
+	je	.end_quotloop
+	inc	edi			; offset++
+	jmp	.quotloop
+	
+.end_quotloop:
 	jmp	.done
 
 .normloop:
 	mov	al, [esi+edi]		; read 1 byte from buffer to token buffer
-	inc	edi			; offset++
 	test	al, al
 	jz	.done
 	cmp	al, 32			; check if byte was space
-	je	.done
-	cmp	al, 10			; check if byte was a next line char
-	je	.done
-	cmp	al, 13			; check if byte was carage return
-	je	.done
+	jle	.done
+	inc	edi			; offset++
 	jmp	.normloop
 
-	; after loop
-	mov	byte [esi+edi-1], 0	; set the last char to a null byte
-	jmp	.done
+
 .done:
 	; return in eax (bytes or error)
+	mov	byte [esi+edi], 0	; set the quote to a null byte
 	mov	eax, ecx		; return line 
 	jmp	.return
 .eof:
 	xor	eax, eax		; return null pointer
 .return:
+	inc	edi
 	mov	ebx, [ebp+12]		; get address
 	mov	[ebx], edi		; update file buffer offset
 	pop	edi

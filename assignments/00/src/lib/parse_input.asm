@@ -36,7 +36,11 @@ parse_input:
 	push	0			; read->file_descriptor = stdin
 	call	read
 	add	esp, 12			; clean stack
+	cmp	eax, 0
+	jle	.return
 
+	mov	ebx, [ebp+8]
+	mov	[ebx+eax], byte 0		; set last read byte to 0 for null terming string
 	mov	dword [offset], 0	; offset = 0
 	mov	edi, 0			; token_array_index = 0
 
