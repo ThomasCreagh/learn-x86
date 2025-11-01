@@ -1,5 +1,6 @@
 extern open
 extern close
+extern read
 extern tokenize_str
 extern strcmp
 
@@ -41,7 +42,7 @@ parse_input:
 
 .loop:
 	push	dword offset		; tokenize_str->offset
-	push	[ebp+8]			; tokenize_str->buffer
+	push	dword [ebp+8]			; tokenize_str->buffer
 	call	tokenize_str
 	add	esp, 8			; clean stack
 	test	eax, eax		; chekcing if bytes written is 0
