@@ -2,30 +2,30 @@ extern add_friend
 extern create_user
 extern display_wall
 extern post_message
+extern parse_input
 extern read
 extern print
+extern strcmp
 
 global server
 
 section .data
-	nok			db	"nok: bad request",10 , 0
+	nok			db	"nok: bad request", 10, 0
+	nok_error		db	"nok: there was an error", 10, 0
+	create_str		db	"create", 0
+	add_str			db	"add", 0
+	post_str		db	"post", 0
+	display_str		db	"display", 0
 
 section .bss
 	input_buffer		resb	512
+	token_array		resd	8
 
 section .text
 ; -----------------------------------------------------------------------------
 ; server
 ; -----------------------------------------------------------------------------
 ; Manages input and runs nessasry subroutines
-;
-; Input:
-;   [ebp+8]  - user id
-; Output:
-;   eax - 0 sucessful or 1 not
-;
-; Registers used:
-;   eax - return value / temporary
 ; -----------------------------------------------------------------------------
 server:
 	push	ebp
@@ -33,44 +33,94 @@ server:
 	push	esi
 	push	edi
 	; save user id
-	mov	esi, [ebp+8]
+.loop:
+	push	token_array
+	push	input_buffer
+	call	parse_input
+	add	esp, 8
+	mov	esi, eax
+	cmp	esi, 1
+	jl	.loop
+	je	.bad_request
 
-	; check user existance
-	push	esi
-	call	user_exists		; user_exists(userid)
-	add	esp, 4			; clean stack
-	
+.create:
+	push	create_str
+	push	[token_array]
+	call	strcmp
+	add	esp, 8
 	test	eax, eax
-	jz	.user_exists		; if (file exists) {
-	push	nok			;   print[0] = nok
-	call	print			;   print error
-	add	esp, 4			;   clean stack
-	mov	eax, 1			;   return val = 1
-	jmp	.exit
-.user_exists:
-	; get wall.txt
-	push	filename_buffer		; get_txt[2] = filename_buffer
-	push	0			; get_txt[1] = 0	// wall file
-	push	esi			; get_txt[0] = user id
-	call	get_txt
-	add	esp, 12			; clean stack
-	
-	; start_of_file
-	push	start_of_file		;   print[0] = start_of_file
-	call	print			;   print start
-	add	esp, 4			;   clean stack
+	jnz	.add
+	cmp	esi, 2
+	jne	.bad_request
+	push	[token_array+4]		; get the first arg and push
+	call	create_user
+	add	esp, 4
+	test	eax, eax
+	jz	.loop
+	jmp	.error
 
-	; cat file
-	push	filename_buffer		; cat->filename_buffer
-	call	cat
-	add	esp, 4			; clean stack
+.add:
+	push	add_str
+	push	[token_array]
+	call	strcmp
+	add	esp, 8
+	test	eax, eax
+	jnz	.post
+	cmp	esi, 3
+	jne	.bad_request
+	push	[token_array+8]		; get the first arg and push
+	push	[token_array+4]		; get the second arg and push
+	call	add_friend
+	add	esp, 8
+	test	eax, eax
+	jz	.loop
+	jmp	.error
 
-	; end_of_file
-	push	end_of_file		;   print[0] = end_of_file
-	call	print			;   print end
-	add	esp, 4			;   clean stack
+.post:
+	push	post_str
+	push	[token_array]
+	call	strcmp
+	add	esp, 8
+	test	eax, eax
+	jnz	.display
+	cmp	esi, 4
+	jne	.bad_request
+	push	[token_array+12]	; get the first arg and push
+	push	[token_array+8]		; get the second arg and push
+	push	[token_array+4]		; get the third arg and push
+	call	post_message
+	add	esp, 12
+	test	eax, eax
+	jz	.loop
+	jmp	.error
 
-	xor	eax, eax
+.display:
+	push	display_str
+	push	[token_array]
+	call	strcmp
+	add	esp, 8
+	test	eax, eax
+	jnz	.bad_request
+	cmp	esi, 2
+	jne	.bad_request
+	push	[token_array+4]		; get the first arg and push
+	call	display_wall
+	add	esp, 4
+	test	eax, eax
+	jz	.loop
+	jmp	.error
+
+.bad_request:
+	push	nok
+	call	print
+	add	esp, 4
+	jmp	.loop
+
+.error:
+	push	nok_error
+	call	print
+	add	esp, 4
+
 .exit:
 	pop	edi
 	pop	esi

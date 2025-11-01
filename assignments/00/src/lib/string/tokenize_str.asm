@@ -29,10 +29,10 @@ tokenize_str:
 
 .trim:
 	mov	al, [esi+edi]		; read 1 byte from buffer to token buffer
+	test	al, al
+	jz	.eof
 	cmp	al, 32			; check if byte was space
 	jne	.end_trim
-	test	al, al
-	jz	.return
 	inc	edi			; buffer++
 	jmp	.trim
 .end_trim:
@@ -66,10 +66,13 @@ tokenize_str:
 
 	; after loop
 	mov	byte [esi+edi-1], 0	; set the space to a null byte
+	jmp	.done
 .done:
 	; return in eax (bytes or error)
 	mov	eax, ecx		; return line 
 	jmp	.return
+.eof:
+	xor	eax, eax		; return null pointer
 .return:
 	mov	ebx, [ebp+12]		; get address
 	mov	[ebx], edi		; update file buffer offset

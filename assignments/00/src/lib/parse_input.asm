@@ -3,19 +3,16 @@ extern close
 extern tokenize_str
 extern strcmp
 
-global 
+global parse_input
 
 section .bss
-	file_buffer	resb	1024
-	line_buffer	resb	256
-	file_offset	resd	1      ; reserve 4 bytes (int)
-	bytes_read	resd	1      ; reserve 4 bytes (int)
+	offset	resd	1      ; reserve 4 bytes (int)
 
 section .text
 ; -----------------------------------------------------------------------------
 ; parse_input
 ; -----------------------------------------------------------------------------
-; Reads the full contents of a file
+; Parses stdin into an array of arguments
 ;
 ; Input:
 ;   [ebp+8]   - input_buffer
@@ -24,12 +21,14 @@ section .text
 ;
 ; Registers used:
 ; -----------------------------------------------------------------------------
-user_in_file:
+parse_input:
 	push	ebp
 	mov	ebp, esp
 	push	ebx
 	push	esi
 	push	edi
+
+	mov	esi, [ebp+12]		; token_array
 
 	push	512			; read->size = 512
 	push	dword [ebp+8]		; read->buffer = file buffer
@@ -37,47 +36,24 @@ user_in_file:
 	call	read
 	add	esp, 12			; clean stack
 
-	mov	dword [offset], 0	; file_offset = 0
+	mov	dword [offset], 0	; offset = 0
+	mov	edi, 0			; token_array_index = 0
 
 .loop:
-	; read lines
-	push	bytes_read		; read_line->bytes_read
-	push	file_offset		; read_line->file_offset
-	push	file_buffer		; read_line->file_buffer
-	push	line_buffer		; read_line->line_buffer
-	push	esi			; read_line->fd
-	call	read_line
-	add	esp, 20			; clean stack
+	push	dword offset		; tokenize_str->offset
+	push	[ebp+8]			; tokenize_str->buffer
+	call	tokenize_str
+	add	esp, 8			; clean stack
 	test	eax, eax		; chekcing if bytes written is 0
 	js	.return			; if negative, exit early with eax = error code
-	jz	.not_equal
-	mov	byte [line_buffer+eax-1], 0	; replace end of buffer (\n) with a null byte
-
-	; string compare
-	push	line_buffer	; strcmp->read_line
-	push	dword [ebp+12]		; strcmp->user
-	call	strcmp
-	add	esp, 8			; clean stack
-
-	test	eax, eax		; check if equal
-	jz	.equal
-
+	jz	.end_of_input
+	mov	[esi + edi*4], eax	; move address of token into array
+	inc	edi			; index++
 	jmp	.loop
 
-.not_equal:
-	push	esi			; close->fd = fd
-	call	close
-	add	esp, 4
-
-	xor	eax, eax
+.end_of_input:
+	mov	eax, edi
 	jmp	.return
-
-.equal:
-	push	esi			; close->fd = fd
-	call	close
-	add	esp, 4
-
-	mov	eax, 1
 
 .return:
 	pop	edi
