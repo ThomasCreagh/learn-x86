@@ -32,9 +32,16 @@ tokenize_str:
 	test	al, al
 	jz	.eof
 	cmp	al, 32			; check if byte was space
-	jne	.end_trim
+	je	.skip
+	cmp	al, 10			; check if byte was a next line char
+	je	.skip
+	cmp	al, 13			; check if byte was carage return
+	je	.skip
+	jmp	.end_trim
+.skip:
 	inc	edi			; buffer++
 	jmp	.trim
+
 .end_trim:
 
 	mov	ecx, esi
@@ -62,10 +69,15 @@ tokenize_str:
 	test	al, al
 	jz	.done
 	cmp	al, 32			; check if byte was space
-	jne	.normloop
+	je	.done
+	cmp	al, 10			; check if byte was a next line char
+	je	.done
+	cmp	al, 13			; check if byte was carage return
+	je	.done
+	jmp	.normloop
 
 	; after loop
-	mov	byte [esi+edi-1], 0	; set the space to a null byte
+	mov	byte [esi+edi-1], 0	; set the last char to a null byte
 	jmp	.done
 .done:
 	; return in eax (bytes or error)

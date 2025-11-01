@@ -45,14 +45,14 @@ server:
 
 .create:
 	push	create_str
-	push	[token_array]
+	push	dword [token_array]
 	call	strcmp
 	add	esp, 8
 	test	eax, eax
 	jnz	.add
 	cmp	esi, 2
 	jne	.bad_request
-	push	[token_array+4]		; get the first arg and push
+	push	dword [token_array+4]		; get the first arg and push
 	call	create_user
 	add	esp, 4
 	test	eax, eax
@@ -61,15 +61,15 @@ server:
 
 .add:
 	push	add_str
-	push	[token_array]
+	push	dword [token_array]
 	call	strcmp
 	add	esp, 8
 	test	eax, eax
 	jnz	.post
 	cmp	esi, 3
 	jne	.bad_request
-	push	[token_array+8]		; get the first arg and push
-	push	[token_array+4]		; get the second arg and push
+	push	dword [token_array+8]		; get the first arg and push
+	push	dword [token_array+4]		; get the second arg and push
 	call	add_friend
 	add	esp, 8
 	test	eax, eax
@@ -78,16 +78,16 @@ server:
 
 .post:
 	push	post_str
-	push	[token_array]
+	push	dword [token_array]
 	call	strcmp
 	add	esp, 8
 	test	eax, eax
 	jnz	.display
 	cmp	esi, 4
 	jne	.bad_request
-	push	[token_array+12]	; get the first arg and push
-	push	[token_array+8]		; get the second arg and push
-	push	[token_array+4]		; get the third arg and push
+	push	dword [token_array+12]	; get the first arg and push
+	push	dword [token_array+8]		; get the second arg and push
+	push	dword [token_array+4]		; get the third arg and push
 	call	post_message
 	add	esp, 12
 	test	eax, eax
@@ -96,14 +96,14 @@ server:
 
 .display:
 	push	display_str
-	push	[token_array]
+	push	dword [token_array]
 	call	strcmp
 	add	esp, 8
 	test	eax, eax
 	jnz	.bad_request
 	cmp	esi, 2
 	jne	.bad_request
-	push	[token_array+4]		; get the first arg and push
+	push	dword [token_array+4]		; get the first arg and push
 	call	display_wall
 	add	esp, 4
 	test	eax, eax
