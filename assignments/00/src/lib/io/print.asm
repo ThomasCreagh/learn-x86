@@ -10,12 +10,6 @@ global print
 ;   [ebp+8] - exit message
 ; Output:
 ;   eax - sys print return call
-;
-; Registers used:
-;   eax - distructive
-;   ebx - distructive
-;   ecx - distructive
-;   edx - distructive
 ; -----------------------------------------------------------------------------
 print:
 	push	ebp

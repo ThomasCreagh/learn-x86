@@ -12,10 +12,6 @@ section .text
 ; Input:
 ;   [ebp+8] - filename 
 ; Output: eax - pointer to the destination str null byte
-;
-; Registers used:
-;   eax - return value / temp value
-;   ebx - sys mkdir file name (restored)
 ; -----------------------------------------------------------------------------
 touch:
 	push	ebp

@@ -19,8 +19,6 @@ section .text
 ;   [ebp+8]   - input_buffer
 ;   [ebp+12]  - token_array 
 ; Output: eax - 0 for false 1 for true, neg for error
-;
-; Registers used:
 ; -----------------------------------------------------------------------------
 parse_input:
 	push	ebp

@@ -8,11 +8,6 @@ section .text
 ;
 ; Input: [ebp+8] - user id
 ; Output: eax    - if user exists it returns 0 else -1 if not exists
-;
-; Registers used:
-;   eax - return value / temporary
-;   ebx - user id (preserved)
-;   ecx - F_OK = 0
 ; -----------------------------------------------------------------------------
 user_exists:
 	push	ebp

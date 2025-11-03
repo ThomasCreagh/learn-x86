@@ -21,8 +21,6 @@ section .text
 ;   [ebp+8]   - filename (string)
 ;   [ebp+12]  - user     (string)
 ; Output: eax - 0 for false 1 for true, neg for error
-;
-; Registers used:
 ; -----------------------------------------------------------------------------
 user_in_file:
 	push	ebp

@@ -6,12 +6,6 @@ global exit
 ;
 ; Input:
 ;   [ebp+8]  - exit code
-;
-; Registers used:
-;   eax - distructive
-;   ebx - distructive
-;   ecx - distructive
-;   edx - distructive
 ; -----------------------------------------------------------------------------
 exit:
 	push	ebp

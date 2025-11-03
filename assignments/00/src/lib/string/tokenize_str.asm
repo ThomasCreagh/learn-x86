@@ -13,8 +13,6 @@ section .text
 ;   [ebp+12] - offset - int pointer
 ; Output:
 ;   eax - address of token
-;
-; Registers used:
 ; -----------------------------------------------------------------------------
 tokenize_str:
 	push	ebp

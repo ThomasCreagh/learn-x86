@@ -14,9 +14,6 @@ section .text
 ;   [ebp+12]  - pointer to the source null terminating str
 ;   [ebp+16] - OPTIONAL if destination length known (0 if not known)
 ; Output: eax - pointer to the destination str null byte
-;
-; Registers used:
-;   eax - return value / temp value
 ; -----------------------------------------------------------------------------
 strcat:
 	push	ebp

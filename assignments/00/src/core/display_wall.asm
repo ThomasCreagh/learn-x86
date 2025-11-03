@@ -23,9 +23,6 @@ section .text
 ;   [ebp+8]  - user id
 ; Output:
 ;   eax - 0 sucessful or 1 not
-;
-; Registers used:
-;   eax - return value / temporary
 ; -----------------------------------------------------------------------------
 display_wall:
 	push	ebp

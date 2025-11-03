@@ -13,9 +13,6 @@ section .text
 ;   eax = 0  if equal
 ;   eax < 0  if s1 < s2
 ;   eax > 0  if s1 > s2
-;
-; Registers used:
-;   eax - return value / temp value
 ; -----------------------------------------------------------------------------
 strcmp:
 	push	ebp

@@ -9,11 +9,6 @@ section .text
 ; Input:
 ;   [ebp+8] - dirname 
 ; Output: eax - pointer to the destination str null byte
-;
-; Registers used:
-;   eax - return value / temp value
-;   ebx - sys mkdir dir name (restored)
-;   ecx - tmp
 ; -----------------------------------------------------------------------------
 mkdir:
 	push	ebp

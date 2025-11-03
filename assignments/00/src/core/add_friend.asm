@@ -27,9 +27,6 @@ section .text
 ;   [esp+12] - friend id
 ; Output:
 ;   eax - 0 sucessful or 1 not
-;
-; Registers used:
-;   eax - return value / temporary
 ; -----------------------------------------------------------------------------
 add_friend:
 	push	ebp

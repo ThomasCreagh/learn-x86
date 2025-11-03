@@ -16,8 +16,6 @@ section .text
 ;   [ebp+24]  - byte_read             - int pointer
 ; Output:
 ;   eax - Number of bytes written to line buffer (including \n if present), 0 if EOF, Neg if syscall error code (eax from read)
-;
-; Registers used:
 ; -----------------------------------------------------------------------------
 read_line:
 	push	ebp

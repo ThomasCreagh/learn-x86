@@ -10,8 +10,6 @@ section .text
 ;   [ebp+8]  - filename
 ;   [ebp+12] - open type (0 = read, 1 = write, 2 = append)
 ; Output: eax - file descriptor
-;
-; Registers used:
 ; -----------------------------------------------------------------------------
 open:
 	push	ebp

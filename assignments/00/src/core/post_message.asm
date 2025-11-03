@@ -32,9 +32,6 @@ section .text
 ;   [ebp+16] - message
 ; Output:
 ;   eax - 0 sucessful or 1 not
-;
-; Registers used:
-;   eax - return value / temporary
 ; -----------------------------------------------------------------------------
 post_message:
 	push	ebp

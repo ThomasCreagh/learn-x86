@@ -21,9 +21,6 @@ section .text
 ;   [esp+12] - receiver id
 ;   [esp+12] - message
 ; Output: ok or nok
-;
-; Registers used:
-;   eax - return value / temporary
 ; -----------------------------------------------------------------------------
 
 _start:

@@ -8,11 +8,6 @@ section .text
 ;
 ; Input: [ebp+8] - pointer to the null-terminated string
 ; Output: eax    - length of the string
-;
-; Registers used:
-;   eax - return value / temporary
-;   ecx - length counter
-;   esi - pointer to string (preserved)
 ; -----------------------------------------------------------------------------
 strlen:
 	push	ebp

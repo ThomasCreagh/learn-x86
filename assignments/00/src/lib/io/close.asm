@@ -9,8 +9,6 @@ section .text
 ; Input:
 ;   [ebp+8]  - file descriptor
 ; Output: eax
-;
-; Registers used:
 ; -----------------------------------------------------------------------------
 close:
 	push	ebp

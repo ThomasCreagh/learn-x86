@@ -19,8 +19,6 @@ section .text
 ;   [ebp+8]   - filepath
 ;   [ebp+12]  - user
 ; Output: eax - pointer to the destination str null byte
-;
-; Registers used:
 ; -----------------------------------------------------------------------------
 append_line:
 	push	ebp

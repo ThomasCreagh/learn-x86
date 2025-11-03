@@ -11,8 +11,6 @@ section .text
 ;   [ebp+12] - buffer
 ;   [ebp+16] - size
 ; Output: eax - bytes read or neg errors
-;
-; Registers used:
 ; -----------------------------------------------------------------------------
 read:
 	push	ebp

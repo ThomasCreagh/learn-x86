@@ -10,11 +10,6 @@ section .text
 ;   [ebp+8]  - pointer to the destination null terminating str
 ;   [ebp+12] - pointer to the source null terminating str
 ; Output: eax - pointer to the destination str null byte
-;
-; Registers used:
-;   eax - return value
-;   esi - pointer to source string (preserved)
-;   edi - pointer to dest string (perserved)
 ; -----------------------------------------------------------------------------
 strcpy:
 	push	ebp

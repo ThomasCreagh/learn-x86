@@ -19,9 +19,6 @@ section .text
 ;   [esp+4] - program name
 ;   [esp+8] - user id
 ; Output: ok or nok
-;
-; Registers used:
-;   eax - return value / temporary
 ; -----------------------------------------------------------------------------
 
 _start:

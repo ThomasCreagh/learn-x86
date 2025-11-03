@@ -18,10 +18,6 @@ section .text
 ;   [ebp+12]  - 0 for wall, 1 for friends
 ;   [ebp+16]  - buffer
 ; Output: eax - pointer to the destination str null byte
-;
-; Registers used:
-;   ecx - tmp
-;   eax - return value / temp value
 ; -----------------------------------------------------------------------------
 get_txt:
 	push	ebp

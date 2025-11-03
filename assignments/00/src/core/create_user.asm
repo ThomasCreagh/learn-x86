@@ -24,9 +24,6 @@ section .text
 ;   [ebp+8] - user id
 ; Output:
 ;   eax - sucessful or not
-;
-; Registers used:
-;   eax - return value / temporary
 ; -----------------------------------------------------------------------------
 create_user:
 	push	ebp

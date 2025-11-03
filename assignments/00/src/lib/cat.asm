@@ -18,8 +18,6 @@ section .text
 ; Input:
 ;   [ebp+8]   - filepath
 ; Output: eax - 0 is good neg is bad
-;
-; Registers used:
 ; -----------------------------------------------------------------------------
 cat:
 	push	ebp

@@ -20,9 +20,6 @@ section .text
 ;   [esp+8]  - user id
 ;   [esp+12] - friend id
 ; Output: ok or nok
-;
-; Registers used:
-;   eax - return value / temporary
 ; -----------------------------------------------------------------------------
 
 _start:
