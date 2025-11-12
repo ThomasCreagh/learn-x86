@@ -2,7 +2,7 @@ NASMFLAGS = -f elf32 -g
 GCCFLAGS = -m32 -g -nostartfiles
 LDFLAGS = -m elf_i386
 
-BIN_DIR = bin
+BIN_DIR = .
 DEBUG_DIR = debug
 
 COMMON_SRCS = \
@@ -98,6 +98,10 @@ $(SERVER_DEBUG): $(SERVER_OBJS)
 %.o: %.asm
 	nasm $(NASMFLAGS) $< -o $@
 
-clean:
+clean-o:
 	rm -f $(COMMON_OBJS) $(CREATE_USER_MAIN:.asm=.o) $(ADD_FRIEND_MAIN:.asm=.o) $(POST_MESSAGE_MAIN:.asm=.o) $(DISPLAY_WALL_MAIN:.asm=.o) $(SERVER_MAIN:.asm=.o)
+
+clean:
+	rm -f $(COMMON_OBJS) $(CREATE_USER_MAIN:.asm=.o) $(ADD_FRIEND_MAIN:.asm=.o) $(POST_MESSAGE_MAIN:.asm=.o) $(DISPLAY_WALL_MAIN:.asm=.o) $(SERVER_MAIN:.asm=.o) \
+	$(ADD_FRIEND_BIN) $(CREATE_USER_BIN) $(POST_MESSAGE_BIN) $(DISPLAY_WALL_BIN) $(SERVER_BIN) $(ADD_FRIEND_DEBUG) $(CREATE_USER_DEBUG) $(POST_MESSAGE_DEBUG) $(DISPLAY_WALL_DEBUG) $(SERVER_DEBUG)
 
