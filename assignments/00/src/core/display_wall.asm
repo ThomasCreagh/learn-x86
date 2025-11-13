@@ -6,7 +6,7 @@ extern cat
 global display_wall
 
 section .data
-	nok			db	"nok: user $id does not exist",10 , 0
+	nok			db	"nok: user %s does not exist", 10 , 0	; id
 	start_of_file		db	"start_of_file", 10, 0
 	end_of_file		db	"end_of_file", 10, 0
 
