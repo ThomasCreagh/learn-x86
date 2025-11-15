@@ -28,6 +28,7 @@
         pkgs.gcc_multi
         pkgs.gnumake
         pkgs.gdb
+        pkgs.glibc_multi
       ];
 
       PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
