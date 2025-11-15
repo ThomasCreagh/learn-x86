@@ -10,10 +10,10 @@ extern strcat
 global post_message
 
 section .data
-	nok_sender		db	"nok user $ does not exist", 10, 0	; sender
-	nok_receiver		db	"nok user $ not exist", 10, 0	; receiver 
-	nok_sender_fo_receiver	db	"nok user $ is not a friend of $", 10, 0	; sender, receiver
-	nok_receiver_fo_sender	db	"nok user $ is not a friend of $", 10, 0	; receiver, sender
+	nok_sender		db	"nok: user $ does not exist", 10, 0	; sender
+	nok_receiver		db	"nok: user $ does not exist", 10, 0	; receiver 
+	nok_sender_fo_receiver	db	"nok: user $ is not a friend of $", 10, 0	; sender, receiver
+	nok_receiver_fo_sender	db	"nok: user $ is not a friend of $", 10, 0	; receiver, sender
 	ok			db	"ok", 10, 0
 	semicolon_space		db	": ", 0
 
@@ -75,30 +75,6 @@ post_message:
 	; get friends.txt
 	push	filename_buffer		; get_txt[2] = filename_buffer
 	push	1			; get_txt[1] = 1	// friend file
-	push	esi			; get_txt[0] = sender id
-	call	get_txt
-	add	esp, 12			; clean stack
-
-	; check if user in file
-	push	edi			; user_in_file->receiver
-	push	filename_buffer		; user_in_file->filepath
-	call	user_in_file
-	add	esp, 8			; clean stack
-	cmp	eax, 0
-	js	.exit
-	jg	.receiver_fo_sender	; if (receiver is not a friend of sender) {
-
-	push	esi			;   print[2] = $sender
-	push	edi			;   print[1] = $receiver
-	push	nok_receiver_fo_sender	;   print[0] = nok_receiver_fo_sender
-	call	printf			;   printf error
-	add	esp, 12			;   clean stack
-	mov	eax, 1			;   return val = 1
-	jmp	.exit			; }
-.receiver_fo_sender:
-	; get friends.txt
-	push	filename_buffer		; get_txt[2] = filename_buffer
-	push	1			; get_txt[1] = 1	// friend file
 	push	edi			; get_txt[0] = receiver id
 	call	get_txt
 	add	esp, 12			; clean stack
@@ -121,6 +97,31 @@ post_message:
 	jmp	.exit			; }
 
 .sender_fo_receiver:
+	; get friends.txt
+	push	filename_buffer		; get_txt[2] = filename_buffer
+	push	1			; get_txt[1] = 1	// friend file
+	push	esi			; get_txt[0] = sender id
+	call	get_txt
+	add	esp, 12			; clean stack
+
+	; check if user in file
+	push	edi			; user_in_file->receiver
+	push	filename_buffer		; user_in_file->filepath
+	call	user_in_file
+	add	esp, 8			; clean stack
+	cmp	eax, 0
+	js	.exit
+	jg	.receiver_fo_sender	; if (receiver is not a friend of sender) {
+
+	push	esi			;   print[2] = $sender
+	push	edi			;   print[1] = $receiver
+	push	nok_receiver_fo_sender	;   print[0] = nok_receiver_fo_sender
+	call	printf			;   printf error
+	add	esp, 12			;   clean stack
+	mov	eax, 1			;   return val = 1
+	jmp	.exit			; }
+
+.receiver_fo_sender:
 	; create message
 	push	esi			; strcpy(source)->sender
 	push	message_buffer		; strcpy(destination)->message_buffer
