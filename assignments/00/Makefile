@@ -1,5 +1,5 @@
 NASMFLAGS = -f elf32 -g
-GCCFLAGS = -m32 -g -nostartfiles
+GCCFLAGS = -no-pie -m32 -g -nostartfiles
 LDFLAGS = -m elf_i386
 
 BIN_DIR = .

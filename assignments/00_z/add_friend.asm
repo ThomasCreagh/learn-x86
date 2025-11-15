@@ -10,7 +10,6 @@ global add_friend
 section .data
 	nok_user	db	"nok: user $ does not exist", 10, 0	; id
 	nok_frnd	db	"nok: user $ does not exist", 10, 0	; friend
-	nok_frnded	db	"nok: user $ exists in $'s friend list", 10 , 0	; friend, id
 	ok		db	"ok", 10, 0
 
 
@@ -83,14 +82,7 @@ add_friend:
 	cmp	eax, 0
 	js	.exit
 	je	.not_friend
-
-	push	edi		;   print[2] = $friend
-	push	esi		;   print[1] = $user
-	push	nok_frnded	;   print[0] = nok_frnded
-	call	printf		;   printf error
-	add	esp, 12		;   clean stack
-	mov	eax, 1		;   return val = 1
-	jmp	.exit
+	jmp	.frnded
 
 .not_friend:
 	push	edi		; append_line->friend
@@ -98,6 +90,7 @@ add_friend:
 	call	append_line
 	add	esp, 8		; clean stack
 
+.frnded:
 	push	ok		;   print[0] = ok
 	call	print		;   print ok
 	add	esp, 4		;   clean stack
