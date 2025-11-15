@@ -1,6 +1,7 @@
 extern user_exists
 extern get_txt
 extern print
+extern printf
 extern cat
 
 global display_wall
@@ -39,9 +40,10 @@ display_wall:
 	
 	test	eax, eax
 	jz	.user_exists		; if (file exists) {
+	push	esi			;   print[1] = $user
 	push	nok			;   print[0] = nok
-	call	print			;   print error
-	add	esp, 4			;   clean stack
+	call	printf			;   printf error
+	add	esp, 8			;   clean stack
 	mov	eax, 1			;   return val = 1
 	jmp	.exit
 .user_exists:

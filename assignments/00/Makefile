@@ -14,6 +14,7 @@ COMMON_SRCS = \
     src/lib/io/close.asm \
     src/lib/io/open.asm \
     src/lib/io/print.asm \
+    src/lib/io/printf.asm \
     src/lib/io/read.asm \
     src/lib/io/read_line.asm \
     src/lib/io/write.asm \

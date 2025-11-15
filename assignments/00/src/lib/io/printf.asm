@@ -1,31 +1,35 @@
 extern strcpy
+extern print
 
-global format
+global printf
+
+section .bss
+	buffer	resb	256
 
 section .text
 ; -----------------------------------------------------------------------------
-; format
+; printf
 ; -----------------------------------------------------------------------------
-; Formats string with $ and given vars
+; prints null terminating string with given inputs
 ;
 ; Input:
-;   [ebp+8]  - destination buffer
-;   [ebp+12] - source buffer
-;   [ebp+16] - input 1
+;   [ebp+8] - message
+;   [ebp+12] - input 1
 ;   ...
-;   [ebp+(N*4)+16] - input N
-; Output: eax - number of replaced $
+;   [ebp+(N*4)+12] - input N
+; Output:
+;   eax - sys print return call
 ; -----------------------------------------------------------------------------
-format:
+printf:
 	push	ebp
-	mov	ebp, esp
+	mov	ebp, esp	
 	push	esi
 	push	edi
 	push	ebx
-	mov	ebx, 16		; move to the first input
+	mov	ebx, 12		; move to the first input
 
-	mov	edi, [ebp+8]	; dest = arg[0]
-	mov	esi, [ebp+12]	; source = arg[1]
+	mov	edi, buffer	; dest = arg[0]
+	mov	esi, [ebp+8]	; source = arg[1]
 .loop:
 	lodsb			; tmp = source[index++]
 	cmp	al, '$'
@@ -34,10 +38,10 @@ format:
 	test	al, al
 	jnz	.loop
 
-	jmp	.return
+	jmp	.print
 
 .replace:
-	push	[ebp+ebx]	; push source
+	push	dword [ebp+ebx]	; push source
 	push	edi		; push dest
 	call	strcpy	
 	add	esp, 8		; clean stack
@@ -45,9 +49,14 @@ format:
 	add	ebx, 4		; mov to next input
 	jmp	.loop
 
-.return:
+.print:
+	push	buffer
+	call	print
+	add	esp, 4
+
 	pop	ebx
 	pop	edi
 	pop	esi
 	pop	ebp
 	ret
+

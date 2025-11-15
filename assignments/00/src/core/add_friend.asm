@@ -1,6 +1,7 @@
 extern user_exists
 extern user_in_file
 extern get_txt
+extern printf
 extern print
 extern append_line
 
@@ -45,9 +46,10 @@ add_friend:
 	
 	test	eax, eax
 	jz	.user_exists	; if (file exists) {
+	push	esi		;   print[1] = $id
 	push	nok_user	;   print[0] = nok_user
-	call	print		;   print error
-	add	esp, 4		;   clean stack
+	call	printf		;   printf error
+	add	esp, 8		;   clean stack
 	mov	eax, 1		;   return val = 1
 	jmp	.exit
 .user_exists:
@@ -58,9 +60,10 @@ add_friend:
 	
 	test	eax, eax
 	jz	.frnd_exists	; if (file exists) {
+	push	edi		;   print[1] = $friend
 	push	nok_frnd	;   print[0] = nok_frnd
-	call	print		;   print error
-	add	esp, 4		;   clean stack
+	call	printf		;   printf error
+	add	esp, 8		;   clean stack
 	mov	eax, 1		;   return val = 1
 	jmp	.exit
 .frnd_exists:
@@ -81,9 +84,11 @@ add_friend:
 	js	.exit
 	je	.not_friend
 
+	push	edi		;   print[2] = $friend
+	push	esi		;   print[1] = $user
 	push	nok_frnded	;   print[0] = nok_frnded
-	call	print		;   print error
-	add	esp, 4		;   clean stack
+	call	printf		;   printf error
+	add	esp, 12		;   clean stack
 	mov	eax, 1		;   return val = 1
 	jmp	.exit
 

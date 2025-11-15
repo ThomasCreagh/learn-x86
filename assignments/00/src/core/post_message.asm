@@ -2,6 +2,7 @@ extern user_exists
 extern user_in_file
 extern get_txt
 extern print
+extern printf
 extern append_line
 extern strcpy
 extern strcat
@@ -50,9 +51,10 @@ post_message:
 	
 	test	eax, eax
 	jz	.sender_exists		; if (file exists) {
+	push	esi			;   print[1] = $sender
 	push	nok_sender		;   print[0] = nok_sender
-	call	print			;   print error
-	add	esp, 4			;   clean stack
+	call	printf			;   printf error
+	add	esp, 8			;   clean stack
 	mov	eax, 1			;   return val = 1
 	jmp	.exit
 .sender_exists:
@@ -63,9 +65,10 @@ post_message:
 	
 	test	eax, eax
 	jz	.receiver_exists	; if (file exists) {
+	push	edi			;   print[1] = $receiver
 	push	nok_receiver		;   print[0] = nok_receiver
-	call	print			;   print error
-	add	esp, 4			;   clean stack
+	call	printf			;   printf error
+	add	esp, 8			;   clean stack
 	mov	eax, 1			;   return val = 1
 	jmp	.exit
 .receiver_exists:
@@ -85,9 +88,11 @@ post_message:
 	js	.exit
 	jg	.receiver_fo_sender	; if (receiver is not a friend of sender) {
 
+	push	esi			;   print[2] = $sender
+	push	edi			;   print[1] = $receiver
 	push	nok_receiver_fo_sender	;   print[0] = nok_receiver_fo_sender
-	call	print			;   print error
-	add	esp, 4			;   clean stack
+	call	printf			;   printf error
+	add	esp, 12			;   clean stack
 	mov	eax, 1			;   return val = 1
 	jmp	.exit			; }
 .receiver_fo_sender:
@@ -107,9 +112,11 @@ post_message:
 	js	.exit
 	jg	.sender_fo_receiver	; if (receiver is not a friend of sender) {
 
+	push	edi			;   print[2] = $receiver
+	push	esi			;   print[1] = $sender
 	push	nok_sender_fo_receiver	;   print[0] = nok_sender_fo_receiver
-	call	print			;   print error
-	add	esp, 4			;   clean stack
+	call	printf			;   printf error
+	add	esp, 12			;   clean stack
 	mov	eax, 1			;   return val = 1
 	jmp	.exit			; }
 
