@@ -7,7 +7,7 @@ global print
 ; prints null terminating string
 ;
 ; Input:
-;   [ebp+8] - exit message
+;   [ebp+8] - message
 ; Output:
 ;   eax - sys print return call
 ; -----------------------------------------------------------------------------

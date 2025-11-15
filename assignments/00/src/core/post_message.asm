@@ -9,10 +9,10 @@ extern strcat
 global post_message
 
 section .data
-	nok_sender		db	"nok user %s does not exist", 10, 0	; sender
-	nok_receiver		db	"nok user %s not exist", 10, 0	; receiver 
-	nok_sender_fo_receiver	db	"nok user %s is not a friend of %s", 10, 0	; sender, receiver
-	nok_receiver_fo_sender	db	"nok user %s is not a friend of %s", 10, 0	; receiver, sender
+	nok_sender		db	"nok user $ does not exist", 10, 0	; sender
+	nok_receiver		db	"nok user $ not exist", 10, 0	; receiver 
+	nok_sender_fo_receiver	db	"nok user $ is not a friend of $", 10, 0	; sender, receiver
+	nok_receiver_fo_sender	db	"nok user $ is not a friend of $", 10, 0	; receiver, sender
 	ok			db	"ok", 10, 0
 	semicolon_space		db	": ", 0
 

@@ -7,9 +7,9 @@ extern append_line
 global add_friend
 
 section .data
-	nok_user	db	"nok: user %s does not exist", 10, 0	; id
-	nok_frnd	db	"nok: user %s does not exist", 10, 0	; friend
-	nok_frnded	db	"nok: user %s exists in %s's friend list", 10 , 0	; friend, id
+	nok_user	db	"nok: user $ does not exist", 10, 0	; id
+	nok_frnd	db	"nok: user $ does not exist", 10, 0	; friend
+	nok_frnded	db	"nok: user $ exists in $'s friend list", 10 , 0	; friend, id
 	ok		db	"ok", 10, 0
 
 
