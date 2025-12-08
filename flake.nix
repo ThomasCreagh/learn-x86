@@ -18,6 +18,8 @@
   {
     devShells.${system}.default = pkgs.mkShell {
       packages = [
+        pkgs.pkgsCross.riscv64.stdenv.cc
+        pkgs.qemu
         pkgs.uasm
         pkgs.nasm
         pkgs.pkg-config
