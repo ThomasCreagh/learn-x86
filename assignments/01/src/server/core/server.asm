@@ -18,6 +18,8 @@ section .data
 	add_str		db	"add", 0
 	post_str	db	"post", 0
 	display_str	db	"display", 0
+	server_np	db	"../../../server.pipe", 0
+	client_np	db	"../../../anthony.pipe", 0
 	server_fd	dd	1
 	client_fd	dd	0
 
@@ -36,6 +38,25 @@ server:
 	mov	ebp, esp
 	push	esi
 	push	edi
+	; open pipes
+	mov	ecx, [server_fd]
+	cmp	ecx, 1
+	jeq	.stdout
+	; open server pipe for writing
+	push	1			; 1 for writing
+	push	server_np
+	call	open
+	mov	[server_fd], eax
+.stdout:
+	mov	ecx, [client_fd]
+	cmp	ecx, 0
+	jeq	.stdin
+	; open client pipe for reading
+	push	0			; 0 for writing
+	push	client_np
+	call	open
+	mov	[client_fd], eax
+.stdin:
 	; save user id
 .loop:
 	push	token_array
