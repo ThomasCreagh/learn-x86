@@ -18,12 +18,15 @@ section .data
 	add_str		db	"add", 0
 	post_str	db	"post", 0
 	display_str	db	"display", 0
-	server_np	db	"../../../server.pipe", 0
-	client_np	db	"../../../anthony.pipe", 0
+	server_pipe	db	"../../../server.pipe", 0
+	pipe_dir	db	"../../../", 0
+	pipe_ext	db	".pipe", 0
+	; client_ack	db	"ACK", 0
 	server_fd	dd	1
 	client_fd	dd	0
 
 section .bss
+	client_pipe	resb	512
 	input_buffer	resb	512
 	token_array	resd	8
 
@@ -38,25 +41,24 @@ server:
 	mov	ebp, esp
 	push	esi
 	push	edi
-	; open pipes
-	mov	ecx, [server_fd]
-	cmp	ecx, 1
-	jeq	.stdout
-	; open server pipe for writing
-	push	1			; 1 for writing
-	push	server_np
+	; open server pipe for reading
+	push	0			; 0 for reading
+	push	server_pipe
 	call	open
+	add	esp, 8
 	mov	[server_fd], eax
-.stdout:
-	mov	ecx, [client_fd]
-	cmp	ecx, 0
-	jeq	.stdin
-	; open client pipe for reading
-	push	0			; 0 for writing
-	push	client_np
-	call	open
-	mov	[client_fd], eax
-.stdin:
+	; ; read from the server pipe for the client name
+	; push	256
+	; push	input_buffer
+	; push	[server_fd]
+	; call	read
+	; add	esp, 12
+	; concate pipe path
+		; ; ack to client pipe
+	; push	client_ack
+	; call	print
+	; add	esp, 4
+
 	; save user id
 .loop:
 	push	token_array
@@ -77,6 +79,27 @@ server:
 	jnz	.add
 	cmp	esi, 2
 	jne	.bad_request
+
+	; make client pipe path
+	push	pipe_dir
+	push	client_pipe
+	call	strcpy
+	add	esp, 8
+	push	[token_array+4]
+	push	eax
+	call	strcpy
+	add	esp, 8
+	push	pipe_ext
+	push	eax
+	call	strcpy
+	add	esp, 8
+	; open client pipe for writing
+	push	1			; 1 for writing
+	push	client_pipe
+	call	open
+	add	esp, 8
+	mov	[client_fd], eax
+
 	push	dword [token_array+4]		; get the first arg and push
 	call	create_user
 	add	esp, 4
