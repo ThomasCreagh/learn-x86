@@ -8,10 +8,15 @@ extern print
 extern strcmp
 extern strcpy
 extern open
+extern close
+extern connect_pipe
+
+extern server_pipe
+extern server_fd
+extern client_fd
+
 
 global server
-global server_fd
-global client_fd
 
 section .data
 	nok		db	"nok: bad request", 10, 0
@@ -20,15 +25,8 @@ section .data
 	add_str		db	"add", 0
 	post_str	db	"post", 0
 	display_str	db	"display", 0
-	server_pipe	db	"../../../server.pipe", 0
-	pipe_dir	db	"../../../", 0
-	pipe_ext	db	".pipe", 0
-	; client_ack	db	"ACK", 0
-	server_fd	dd	1
-	client_fd	dd	0
 
 section .bss
-	client_pipe	resb	512
 	input_buffer	resb	512
 	token_array	resd	8
 
@@ -49,19 +47,7 @@ server:
 	call	open
 	add	esp, 8
 	mov	[server_fd], eax
-	; ; read from the server pipe for the client name
-	; push	256
-	; push	input_buffer
-	; push	[server_fd]
-	; call	read
-	; add	esp, 12
-	; concate pipe path
-		; ; ack to client pipe
-	; push	client_ack
-	; call	print
-	; add	esp, 4
-
-	; save user id
+		; save user id
 .loop:
 	push	token_array
 	push	input_buffer
@@ -82,30 +68,20 @@ server:
 	cmp	esi, 2
 	jne	.bad_request
 
-	; make client pipe path
-	push	pipe_dir
-	push	client_pipe
-	call	strcpy
-	add	esp, 8
 	push	dword [token_array+4]
-	push	eax
-	call	strcpy
-	add	esp, 8
-	push	pipe_ext
-	push	eax
-	call	strcpy
-	add	esp, 8
-	; open client pipe for writing
-	push	1			; 1 for writing
-	push	client_pipe
-	call	open
-	add	esp, 8
-	mov	[client_fd], eax
+	call	connect_pipe
+	add	esp, 4
 
 	push	dword [token_array+4]		; get the first arg and push
 	call	create_user
 	add	esp, 4
-	test	eax, eax
+	mov	edi, eax
+
+	push	dword [client_fd]
+	call	close
+	add	esp, 4
+
+	test	edi, edi
 	jmp	.loop
 
 .add:
@@ -117,11 +93,22 @@ server:
 	jnz	.post
 	cmp	esi, 3
 	jne	.bad_request
+
+	push	dword [token_array+4]
+	call	connect_pipe
+	add	esp, 4
+
 	push	dword [token_array+8]		; get the first arg and push
 	push	dword [token_array+4]		; get the second arg and push
 	call	add_friend
 	add	esp, 8
-	test	eax, eax
+	mov	edi, eax
+
+	push	dword [client_fd]
+	call	close
+	add	esp, 4
+
+	test	edi, edi
 	jmp	.loop
 
 .post:
@@ -133,12 +120,23 @@ server:
 	jnz	.display
 	cmp	esi, 4
 	jne	.bad_request
+
+	push	dword [token_array+4]
+	call	connect_pipe
+	add	esp, 4
+
 	push	dword [token_array+12]	; get the first arg and push
 	push	dword [token_array+8]		; get the second arg and push
 	push	dword [token_array+4]		; get the third arg and push
 	call	post_message
 	add	esp, 12
-	test	eax, eax
+	mov	edi, eax
+
+	push	dword [client_fd]
+	call	close
+	add	esp, 4
+
+	test	edi, edi
 	jmp	.loop
 
 .display:
@@ -150,10 +148,21 @@ server:
 	jnz	.bad_request
 	cmp	esi, 2
 	jne	.bad_request
+
+	push	dword [token_array+4]
+	call	connect_pipe
+	add	esp, 4
+
 	push	dword [token_array+4]		; get the first arg and push
 	call	display_wall
 	add	esp, 4
-	test	eax, eax
+	mov	edi, eax
+
+	push	dword [client_fd]
+	call	close
+	add	esp, 4
+
+	test	edi, edi
 	jmp	.loop
 
 .bad_request:

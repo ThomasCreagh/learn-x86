@@ -3,6 +3,7 @@
 extern int start(int argc, char **argv);
 
 int main(int argc, char **argv) {
+    printf("argc: %d\n", argc);
     printf("calling client _start\n");
     start(argc, argv);
     printf("finished client execution\n");

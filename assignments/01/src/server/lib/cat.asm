@@ -2,6 +2,7 @@ extern open
 extern close
 extern read
 extern write
+extern client_fd
 
 global cat
 
@@ -48,7 +49,7 @@ cat:
 	; write to file
 	push	eax			; write->size
 	push	buffer			; write->buffer
-	push	1			; write->stdout
+	push	dword [client_fd]			; write->stdout
 	call	write
 	add	esp, 12			; clean stack
 

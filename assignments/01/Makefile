@@ -26,6 +26,7 @@ COMMON_SRCS = \
     src/server/lib/string/tokenize_str.asm \
     src/server/lib/append_line.asm \
     src/server/lib/cat.asm \
+    src/server/lib/connect_pipe.asm \
     src/server/lib/exit.asm \
     src/server/lib/get_txt.asm \
     src/server/lib/mkdir.asm \
@@ -64,7 +65,7 @@ SERVER_DEBUG  = $(DEBUG_DIR)/server
 RISCV_AS = riscv64-unknown-linux-gnu-as
 RISCV_CC = riscv64-unknown-linux-gnu-gcc
 RISCV_OBJS = src/client/client.o src/client/strcpy.o src/client/strlen.o
-CLIENT_DRIVER = src/client/driver.c
+#CLIENT_DRIVER = src/client/driver.c
 
 CLIENT_BIN  = $(BIN_DIR)/client
 CLIENT_DEBUG = $(DEBUG_DIR)/client
@@ -107,11 +108,12 @@ $(SERVER_DEBUG): $(SERVER_OBJS)
 	@mkdir -p $(DEBUG_DIR)
 	ld $(LDFLAGS) -o $@ $^
 
-$(CLIENT_BIN): $(RISCV_OBJS) $(CLIENT_DRIVER)
-	$(RISCV_CC) -o $@ $(CLIENT_DRIVER) $(RISCV_OBJS)
+$(CLIENT_BIN): $(RISCV_OBJS)
+	$(RISCV_CC) -o $@ $(RISCV_OBJS)
+$(CLIENT_DEBUG): $(RISCV_OBJS)
+	$(RISCV_CC) -g -o $@ $(RISCV_OBJS)
 
-$(CLIENT_DEBUG): $(RISCV_OBJS) $(CLIENT_DRIVER)
-	$(RISCV_CC) -g -o $@ $(CLIENT_DRIVER) $(RISCV_OBJS)
+#$(CLIENT_DRIVER)
 
 %.o: %.asm
 	nasm $(NASMFLAGS) $< -o $@

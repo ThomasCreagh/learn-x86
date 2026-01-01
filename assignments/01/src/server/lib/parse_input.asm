@@ -3,7 +3,7 @@ extern close
 extern read
 extern tokenize_str
 extern strcmp
-extern client_fd
+extern server_fd
 
 global parse_input
 
@@ -30,9 +30,11 @@ parse_input:
 
 	mov	esi, [ebp+12]		; token_array
 
+	mov	ebx, [server_fd]
 	push	512			; read->size = 512
 	push	dword [ebp+8]		; read->buffer = file buffer
-	push	client_fd			; read->file_descriptor = stdin
+	
+	push	ebx			; read->file_descriptor = stdin
 	call	read
 	add	esp, 12			; clean stack
 	cmp	eax, 0

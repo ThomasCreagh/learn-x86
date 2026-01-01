@@ -1,5 +1,5 @@
 extern strlen
-extern server_fd
+extern client_fd
 
 global print
 
@@ -24,7 +24,7 @@ print:
 	mov	edx, eax	; lenght of arg[1]
 
 	mov	eax, 4		; sys_write
-	mov	ebx, server_fd	; stdout
+	mov	ebx, [client_fd]; stdout
 	mov	ecx, [ebp+8]	; address of string
 	int	0x80		; kernal interupt
 
