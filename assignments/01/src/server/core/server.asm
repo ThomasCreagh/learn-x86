@@ -6,6 +6,8 @@ extern parse_input
 extern read
 extern print
 extern strcmp
+extern strcpy
+extern open
 
 global server
 global server_fd
@@ -85,7 +87,7 @@ server:
 	push	client_pipe
 	call	strcpy
 	add	esp, 8
-	push	[token_array+4]
+	push	dword [token_array+4]
 	push	eax
 	call	strcpy
 	add	esp, 8

@@ -1,140 +1,150 @@
-	.section .data
-server_pipe:	.string	"../../server.pipe"
-client_pipe:	.space	64
-req_buf:	.space	256
-resp_buf:	.space	256
-client_prefix:	.string "../../"
-pipe_suffix:	.string ".pipe"
+        .section .data
+server_pipe:    .string "../../server.pipe"
+client_pipe:    .space  64
+req_buf:        .space  256
+resp_buf:       .space  256
+pipe_suffix:    .string ".pipe"
+client_prefix:  .string "../../"
 
-	.section .text
-	.globl start
-	.extern strlen
-	.extern strcpy
+        .section .text
+        .globl start
+        .extern strlen
+        .extern strcpy
 
 start:
-	# a0 = argc, a1 = argv
+        # a0 = argc, a1 = argv
 
-	# argv[1] = u1
-	lw t0, 4(a1)
-	mv s1, t0
+        # load argv pointers (32-bit offsets)
+        ld s1, 4(a1)     # argv[1] = u1
+        ld s2, 8(a1)     # argv[2] = command
+        ld s3, 12(a1)    # argv[3] = u2 (optional)
+        ld s4, 16(a1)    # argv[4] = other (optional)
 
-	# argv[2] = command
-	lw t1, 8(a1)
-	mv s2, t1
+        # just after entering start
+        li a0, 1               # stdout
+        mv a1, s1 # temporary, or use req_buf
+        li a2, 64               # length
+        li a7, 64               # write
+        ecall
 
-	# argv[3] = u2 (optional)
-	lw t2, 12(a1)
-	mv s3, t2
+        # build request string: "<command> <u1> [<u2> [<other>]]\n"
+        la a1, req_buf
+        mv a0, s2
+        jal ra, strcpy
 
-	# argv[4] = other (optional)
-	lw t3, 16(a1)
-	mv s4, t3
+        # append space + u1
+        la a1, req_buf
+        jal ra, strlen
+        add a0, a1, a0
+        li t0, ' '
+        sb t0, 0(a0)
+        addi a0, a0, 1
+        mv a1, a0
+        mv a0, s1
+        jal ra, strcpy
 
-	# build request string: "<command> <u1> [<u2> [<other>]]\n"
-	la a1, req_buf
-	mv a0, s2
-	jal ra, strcpy
-
-	# append space + u1
-	la a1, req_buf
-	jal ra, strlen
-	add a0, a1, a0
-	li t0, ' '
-	sb t0, 0(a0)
-	addi a0, a0, 1
-	mv a1, a0
-	mv a0, s1
-	jal ra, strcpy
-
-	# if u2 exists
-	beqz s3, skip_u2
-	la a1, req_buf
-	jal ra, strlen
-	add a0, a1, a0
-	li t0, ' '
-	sb t0, 0(a0)
-	addi a0, a0, 1
-	mv a1, a0
-	mv a0, s3
-	jal ra, strcpy
+        # append u2 if exists
+        beqz s3, skip_u2
+        la a1, req_buf
+        jal ra, strlen
+        add a0, a1, a0
+        li t0, ' '
+        sb t0, 0(a0)
+        addi a0, a0, 1
+        mv a1, a0
+        mv a0, s3
+        jal ra, strcpy
 skip_u2:
 
-	# if other exists
-	beqz s4, skip_other
-	la a1, req_buf
-	jal ra, strlen
-	add a0, a1, a0
-	li t0, ' '
-	sb t0, 0(a0)
-	addi a0, a0, 1
-	mv a1, a0
-	mv a0, s4
-	jal ra, strcpy
+        # append other if exists
+        beqz s4, skip_other
+        la a1, req_buf
+        jal ra, strlen
+        add a0, a1, a0
+        li t0, ' '
+        sb t0, 0(a0)
+        addi a0, a0, 1
+        mv a1, a0
+        mv a0, s4
+        jal ra, strcpy
 skip_other:
 
-	# append newline
-	la a1, req_buf
-	jal ra, strlen
-	add a0, a1, a0
-	li t0, '\n'
-	sb t0, 0(a0)
+        # append newline
+        la a1, req_buf
+        jal ra, strlen
+        add a0, a1, a0
+        li t0, '\n'
+        sb t0, 0(a0)
 
-	# open server.pipe for write
-	li a0, -100
-	la a1, server_pipe
-	li a2, 1	# O_WRONLY
-	li a3, 0
-	li a7, 56
-	ecall
-	mv s5, a0	# server_fd
+        # open server.pipe for WRITE
+        li a0, -100
+        la a1, server_pipe
+        li a2, 1        # O_WRONLY
+        li a3, 0
+        li a7, 56       # openat
+        ecall
+        mv s5, a0       # server_fd
 
-	# write request
-	mv a0, s5
-	la a1, req_buf
-	la a2, req_buf
-	jal ra, strlen
-	mv a2, a0
-	li a7, 64
-	ecall
+        # write request
+        mv a0, s5
+        la a1, req_buf
+        la a2, req_buf
+        jal ra, strlen
+        mv a2, a0
+        li a7, 64       # write
+        ecall
 
-	# close server_fd
-	mv a0, s5
-	li a7, 57
-	ecall
+        # close server_fd
+        mv a0, s5
+        li a7, 57       # close
+        ecall
 
-	# build client pipe "<u1>.pipe"
-	la a1, client_pipe
-	mv a0, s1
-	jal ra, strcpy
-	la a1, client_pipe
-	la a0, pipe_suffix
-	jal ra, strcpy
+        # build client pipe "../../<u1>.pipe"
+        la a1, client_pipe
+        la a0, client_prefix
+        jal ra, strcpy       # copy "../../"
 
-	# open client.pipe for read
-	li a0, -100
-	la a1, client_pipe
-	li a2, 0	# O_RDONLY
-	li a3, 0
-	li a7, 56
-	ecall
-	mv s6, a0	# client_fd
+        la a1, client_pipe
+        jal ra, strlen
+        add a0, a1, a0
+        mv a1, a0
+        mv a0, s1
+        jal ra, strcpy       # copy <u1>
 
-	# read response
-	mv a0, s6
-	la a1, resp_buf
-	li a2, 256
-	li a7, 63
-	ecall
+        la a1, client_pipe
+        jal ra, strlen
+        add a0, a1, a0
+        mv a1, a0
+        la a0, pipe_suffix
+        jal ra, strcpy       # append ".pipe"
 
-	# write response to stdout
-	li a0, 1
-	la a1, resp_buf
-	li a2, 256
-	li a7, 64
-	ecall
+        # open client.pipe for READ
+        li a0, -100
+        la a1, client_pipe
+        li a2, 0        # O_RDONLY
+        li a3, 0
+        li a7, 56       # openat
+        ecall
+        mv s6, a0       # client_fd
 
-	# exit
-	li a0, 0
-	li a7, 93
-	ecall
+        # read response
+        mv a0, s6
+        la a1, resp_buf
+        li a2, 256
+        li a7, 63       # read
+        ecall
+
+        # write response to stdout
+        li a0, 1
+        la a1, resp_buf
+        la a2, resp_buf
+        jal ra, strlen
+        mv a2, a0
+        li a7, 64       # write
+        ecall
+
+        # exit
+        li a0, 0
+        li a7, 93
+        ecall
 

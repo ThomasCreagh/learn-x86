@@ -1,9 +1,10 @@
+BIN_DIR = .
+DEBUG_DIR = debug
+
+# server
 NASMFLAGS = -f elf32 -g
 GCCFLAGS = -no-pie -m32 -g -nostartfiles
 LDFLAGS = -m elf_i386
-
-BIN_DIR = .
-DEBUG_DIR = debug
 
 COMMON_SRCS = \
     src/server/core/add_friend.asm \
@@ -59,7 +60,17 @@ POST_MESSAGE_DEBUG  = $(DEBUG_DIR)/post_message
 DISPLAY_WALL_DEBUG  = $(DEBUG_DIR)/display_wall
 SERVER_DEBUG  = $(DEBUG_DIR)/server
 
-all: $(CREATE_USER_BIN) $(ADD_FRIEND_BIN) $(POST_MESSAGE_BIN) $(DISPLAY_WALL_BIN) $(SERVER_BIN) $(CREATE_USER_DEBUG) $(ADD_FRIEND_DEBUG) $(POST_MESSAGE_DEBUG) $(DISPLAY_WALL_DEBUG) $(SERVER_DEBUG)
+# client
+RISCV_AS = riscv64-unknown-linux-gnu-as
+RISCV_CC = riscv64-unknown-linux-gnu-gcc
+RISCV_OBJS = src/client/client.o src/client/strcpy.o src/client/strlen.o
+CLIENT_DRIVER = src/client/driver.c
+
+CLIENT_BIN  = $(BIN_DIR)/client
+CLIENT_DEBUG = $(DEBUG_DIR)/client
+
+# main compile
+all: $(CREATE_USER_BIN) $(ADD_FRIEND_BIN) $(POST_MESSAGE_BIN) $(DISPLAY_WALL_BIN) $(SERVER_BIN) $(CREATE_USER_DEBUG) $(ADD_FRIEND_DEBUG) $(POST_MESSAGE_DEBUG) $(DISPLAY_WALL_DEBUG) $(SERVER_DEBUG) $(CLIENT_BIN) $(CLIENT_DEBUG)
 
 $(CREATE_USER_BIN): $(CREATE_USER_OBJS)
 	@mkdir -p $(BIN_DIR)
@@ -96,14 +107,23 @@ $(SERVER_DEBUG): $(SERVER_OBJS)
 	@mkdir -p $(DEBUG_DIR)
 	ld $(LDFLAGS) -o $@ $^
 
+$(CLIENT_BIN): $(RISCV_OBJS) $(CLIENT_DRIVER)
+	$(RISCV_CC) -o $@ $(CLIENT_DRIVER) $(RISCV_OBJS)
+
+$(CLIENT_DEBUG): $(RISCV_OBJS) $(CLIENT_DRIVER)
+	$(RISCV_CC) -g -o $@ $(CLIENT_DRIVER) $(RISCV_OBJS)
+
 %.o: %.asm
 	nasm $(NASMFLAGS) $< -o $@
 
+%.o: %.s
+	$(RISCV_AS) -o $@ $<
+
 clean-o:
-	rm -f $(COMMON_OBJS) $(CREATE_USER_MAIN:.asm=.o) $(ADD_FRIEND_MAIN:.asm=.o) $(POST_MESSAGE_MAIN:.asm=.o) $(DISPLAY_WALL_MAIN:.asm=.o) $(SERVER_MAIN:.asm=.o)
+	rm -f $(COMMON_OBJS) $(CREATE_USER_MAIN:.asm=.o) $(ADD_FRIEND_MAIN:.asm=.o) $(POST_MESSAGE_MAIN:.asm=.o) $(DISPLAY_WALL_MAIN:.asm=.o) $(SERVER_MAIN:.asm=.o) $(RISCV_OBJS)
 
 clean:
 	rm -rf $(COMMON_OBJS) $(CREATE_USER_MAIN:.asm=.o) $(ADD_FRIEND_MAIN:.asm=.o) $(POST_MESSAGE_MAIN:.asm=.o) $(DISPLAY_WALL_MAIN:.asm=.o) $(SERVER_MAIN:.asm=.o) \
-	$(ADD_FRIEND_BIN) $(CREATE_USER_BIN) $(POST_MESSAGE_BIN) $(DISPLAY_WALL_BIN) $(SERVER_BIN) $(ADD_FRIEND_DEBUG) $(CREATE_USER_DEBUG) $(POST_MESSAGE_DEBUG) $(DISPLAY_WALL_DEBUG) $(SERVER_DEBUG) \
+	$(ADD_FRIEND_BIN) $(CREATE_USER_BIN) $(POST_MESSAGE_BIN) $(DISPLAY_WALL_BIN) $(SERVER_BIN) $(ADD_FRIEND_DEBUG) $(CREATE_USER_DEBUG) $(POST_MESSAGE_DEBUG) $(DISPLAY_WALL_DEBUG) $(SERVER_DEBUG) $(RISCV_OBJS) $(CLIENT_BIN) $(CLIENT_DEBUG) \
 	debug
 
